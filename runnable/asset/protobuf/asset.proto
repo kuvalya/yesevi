@@ -1,0 +1,18 @@
+syntax = "proto2";
+
+package yesevi;
+
+option java_multiple_files = true;
+option java_package = "com.umut.yesevi.protobuf";
+option java_outer_classname = "AssetProtos";
+
+message AssetPro {
+  optional double id = 1;
+  optional float rationum = 2;
+  optional int32 barcode = 3;
+  optional int32 itemnum = 4;
+}
+
+message AssetArray {
+  repeated AssetPro asset= 1;
+}

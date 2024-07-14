@@ -1,0 +1,18 @@
+syntax = "proto2";
+
+package yesevi;
+
+option java_multiple_files = true;
+option java_package = "com.umut.yesevi.protobuf";
+option java_outer_classname = "PersonProtos";
+
+message PersonPro {
+  optional string name = 1;
+  optional string lastname = 2;
+  optional string address = 3;
+  optional string city = 4;
+}
+
+message PersonArray {
+  repeated PersonPro person = 1;
+}

@@ -1,0 +1,10 @@
+{"namespace": "com.umut.yesevi.avro",
+ "type": "record",
+ "name": "PersonAvro",
+ "fields": [
+     {"name": "name", "type": "string"},
+     {"name": "lastname", "type": "string"},
+     {"name": "address", "type": "string"},
+     {"name": "city", "type": "string"}
+ ]
+}
