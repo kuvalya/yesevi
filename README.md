@@ -1,0 +1,5 @@
+- yeseviproject-asset: Only text test codes
+- yeseviproject-employee: Only number test codes
+- yeseviproject-person: Both text and number test codes
+- tools: Protobuf and Avro support tools
+- runnable: Runaable versions of codes
