@@ -1,0 +1,18 @@
+syntax = "proto2";
+
+package yesevi;
+
+option java_multiple_files = true;
+option java_package = "com.umut.yesevi.protobuf";
+option java_outer_classname = "EmployeeProtos";
+
+message EmployeePro {
+  optional double recid = 1;
+  optional float share = 2;
+  optional int32 jobcode = 3;
+  optional string title = 4;
+}
+
+message EmployeeArray {
+  repeated EmployeePro employee= 1;
+}
