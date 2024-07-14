@@ -1,0 +1,10 @@
+{"namespace": "com.umut.yesevi.avro",
+ "type": "record",
+ "name": "AssetAvro",
+ "fields": [
+     {"name": "id", "type": "double"},
+     {"name": "rationum", "type": "float"},
+     {"name": "barcode", "type": "int"},
+     {"name": "itemnum", "type": "int"}
+ ]
+}
