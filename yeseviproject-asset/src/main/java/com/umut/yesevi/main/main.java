@@ -38,7 +38,7 @@ public class main {
 	// repating number:
 	private final static int REPEATING_NUMBER = 1_000;
 
-	// test data that will be used for all serialization methods:
+	// test data that will be used for all serialization methods: 
 	private static Asset[] assetTestArray;
 
 	// SIZE test variables
