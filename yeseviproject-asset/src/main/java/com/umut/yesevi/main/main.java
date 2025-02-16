@@ -5,10 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
@@ -20,12 +18,17 @@ import org.apache.avro.generic.GenericDatumWriter;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.*;
 import org.apache.avro.specific.SpecificDatumReader;
+import org.apache.thrift.TException;
+import org.apache.thrift.protocol.TBinaryProtocol;
+import org.apache.thrift.transport.TIOStreamTransport;
+import org.apache.thrift.transport.TTransport;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.umut.yesevi.avro.AssetAvro;
 import com.umut.yesevi.protobuf.AssetArray;
 import com.umut.yesevi.protobuf.AssetPro;
+import com.umut.yesevi.thrift.AssetThrift;
 
 public class main {
 	private final static String OUTPUT_PATH = "output/";
@@ -277,6 +280,62 @@ public class main {
 		return jsonArr;
 	}
 
+	// thrift start......
+
+	private static void thriftAssetTest() throws IOException {
+		// reseting test variables:
+		resetVariables();
+
+		// Starting Thrift serialization:
+		System.out.println("Starting Thrift serialization....");
+		for (int i = 0; i < REPEATING_NUMBER; i++) {
+			// Set test variables:
+			beforeSerialization("thrift", i);
+
+			// Start serialization:
+			protobufAssetSerialization(assetTestArray, outputFile);
+
+			// Get test variables:
+			afterSerialization();
+		}
+
+		// Starting Protobuf deserialization:
+		System.out.println("Starting Protobuf deserialization....");
+		for (int i = 0; i < REPEATING_NUMBER; i++) {
+			// Set test variables:
+			beforeDeserialization();
+
+			// Start deserialization:
+			protobufAssetDeserialization(new File(serializedFileNames[i]));
+
+			// Get test variables:
+			afterDeserialization();
+		}
+	}
+
+	
+
+
+    // 10 tane Thrift nesnesini dosyaya yazma
+    public static void serializeToFile(Asset[] testArray, File outputFile) throws TException, IOException {
+        try (FileOutputStream fos = new FileOutputStream(outputFile);
+             TTransport transport = new TIOStreamTransport(fos)) {
+            TBinaryProtocol protocol = new TBinaryProtocol(transport);
+            for (Asset asset : testArray) {
+            	
+                asset.write(protocol);  // Her nesneyi sırayla yaz
+            }
+        }
+        System.out.println("Serialization successful: " + filePath);
+    }
+    
+    
+	
+	
+	
+	// thrift end.....
+	
+	
 	private static void protobufAssetTest() throws IOException {
 		// reseting test variables:
 		resetVariables();
