@@ -48,7 +48,7 @@ public final class AssetProtos {
       "\001 \001(\001\022\020\n\010rationum\030\002 \001(\002\022\017\n\007barcode\030\003 \001(\005" +
       "\022\017\n\007itemnum\030\004 \001(\005\"-\n\nAssetArray\022\037\n\005asset" +
       "\030\001 \003(\0132\020.yesevi.AssetProB)\n\030com.umut.yes" +
-      "evi.protobufB\013AssetProtosP\001"
+      "evi.protobufB\013AssetProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

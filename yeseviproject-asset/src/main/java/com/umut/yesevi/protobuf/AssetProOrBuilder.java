@@ -10,45 +10,25 @@ public interface AssetProOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>optional double id = 1;</code>
-   * @return Whether the id field is set.
-   */
-  boolean hasId();
-  /**
-   * <code>optional double id = 1;</code>
+   * <code>double id = 1;</code>
    * @return The id.
    */
   double getId();
 
   /**
-   * <code>optional float rationum = 2;</code>
-   * @return Whether the rationum field is set.
-   */
-  boolean hasRationum();
-  /**
-   * <code>optional float rationum = 2;</code>
+   * <code>float rationum = 2;</code>
    * @return The rationum.
    */
   float getRationum();
 
   /**
-   * <code>optional int32 barcode = 3;</code>
-   * @return Whether the barcode field is set.
-   */
-  boolean hasBarcode();
-  /**
-   * <code>optional int32 barcode = 3;</code>
+   * <code>int32 barcode = 3;</code>
    * @return The barcode.
    */
   int getBarcode();
 
   /**
-   * <code>optional int32 itemnum = 4;</code>
-   * @return Whether the itemnum field is set.
-   */
-  boolean hasItemnum();
-  /**
-   * <code>optional int32 itemnum = 4;</code>
+   * <code>int32 itemnum = 4;</code>
    * @return The itemnum.
    */
   int getItemnum();

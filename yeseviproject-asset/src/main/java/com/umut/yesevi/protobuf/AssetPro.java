@@ -42,19 +42,10 @@ private static final long serialVersionUID = 0L;
             com.umut.yesevi.protobuf.AssetPro.class, com.umut.yesevi.protobuf.AssetPro.Builder.class);
   }
 
-  private int bitField0_;
   public static final int ID_FIELD_NUMBER = 1;
   private double id_ = 0D;
   /**
-   * <code>optional double id = 1;</code>
-   * @return Whether the id field is set.
-   */
-  @java.lang.Override
-  public boolean hasId() {
-    return ((bitField0_ & 0x00000001) != 0);
-  }
-  /**
-   * <code>optional double id = 1;</code>
+   * <code>double id = 1;</code>
    * @return The id.
    */
   @java.lang.Override
@@ -65,15 +56,7 @@ private static final long serialVersionUID = 0L;
   public static final int RATIONUM_FIELD_NUMBER = 2;
   private float rationum_ = 0F;
   /**
-   * <code>optional float rationum = 2;</code>
-   * @return Whether the rationum field is set.
-   */
-  @java.lang.Override
-  public boolean hasRationum() {
-    return ((bitField0_ & 0x00000002) != 0);
-  }
-  /**
-   * <code>optional float rationum = 2;</code>
+   * <code>float rationum = 2;</code>
    * @return The rationum.
    */
   @java.lang.Override
@@ -84,15 +67,7 @@ private static final long serialVersionUID = 0L;
   public static final int BARCODE_FIELD_NUMBER = 3;
   private int barcode_ = 0;
   /**
-   * <code>optional int32 barcode = 3;</code>
-   * @return Whether the barcode field is set.
-   */
-  @java.lang.Override
-  public boolean hasBarcode() {
-    return ((bitField0_ & 0x00000004) != 0);
-  }
-  /**
-   * <code>optional int32 barcode = 3;</code>
+   * <code>int32 barcode = 3;</code>
    * @return The barcode.
    */
   @java.lang.Override
@@ -103,15 +78,7 @@ private static final long serialVersionUID = 0L;
   public static final int ITEMNUM_FIELD_NUMBER = 4;
   private int itemnum_ = 0;
   /**
-   * <code>optional int32 itemnum = 4;</code>
-   * @return Whether the itemnum field is set.
-   */
-  @java.lang.Override
-  public boolean hasItemnum() {
-    return ((bitField0_ & 0x00000008) != 0);
-  }
-  /**
-   * <code>optional int32 itemnum = 4;</code>
+   * <code>int32 itemnum = 4;</code>
    * @return The itemnum.
    */
   @java.lang.Override
@@ -133,16 +100,16 @@ private static final long serialVersionUID = 0L;
   @java.lang.Override
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (((bitField0_ & 0x00000001) != 0)) {
+    if (java.lang.Double.doubleToRawLongBits(id_) != 0) {
       output.writeDouble(1, id_);
     }
-    if (((bitField0_ & 0x00000002) != 0)) {
+    if (java.lang.Float.floatToRawIntBits(rationum_) != 0) {
       output.writeFloat(2, rationum_);
     }
-    if (((bitField0_ & 0x00000004) != 0)) {
+    if (barcode_ != 0) {
       output.writeInt32(3, barcode_);
     }
-    if (((bitField0_ & 0x00000008) != 0)) {
+    if (itemnum_ != 0) {
       output.writeInt32(4, itemnum_);
     }
     getUnknownFields().writeTo(output);
@@ -154,19 +121,19 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
-    if (((bitField0_ & 0x00000001) != 0)) {
+    if (java.lang.Double.doubleToRawLongBits(id_) != 0) {
       size += com.google.protobuf.CodedOutputStream
         .computeDoubleSize(1, id_);
     }
-    if (((bitField0_ & 0x00000002) != 0)) {
+    if (java.lang.Float.floatToRawIntBits(rationum_) != 0) {
       size += com.google.protobuf.CodedOutputStream
         .computeFloatSize(2, rationum_);
     }
-    if (((bitField0_ & 0x00000004) != 0)) {
+    if (barcode_ != 0) {
       size += com.google.protobuf.CodedOutputStream
         .computeInt32Size(3, barcode_);
     }
-    if (((bitField0_ & 0x00000008) != 0)) {
+    if (itemnum_ != 0) {
       size += com.google.protobuf.CodedOutputStream
         .computeInt32Size(4, itemnum_);
     }
@@ -185,28 +152,16 @@ private static final long serialVersionUID = 0L;
     }
     com.umut.yesevi.protobuf.AssetPro other = (com.umut.yesevi.protobuf.AssetPro) obj;
 
-    if (hasId() != other.hasId()) return false;
-    if (hasId()) {
-      if (java.lang.Double.doubleToLongBits(getId())
-          != java.lang.Double.doubleToLongBits(
-              other.getId())) return false;
-    }
-    if (hasRationum() != other.hasRationum()) return false;
-    if (hasRationum()) {
-      if (java.lang.Float.floatToIntBits(getRationum())
-          != java.lang.Float.floatToIntBits(
-              other.getRationum())) return false;
-    }
-    if (hasBarcode() != other.hasBarcode()) return false;
-    if (hasBarcode()) {
-      if (getBarcode()
-          != other.getBarcode()) return false;
-    }
-    if (hasItemnum() != other.hasItemnum()) return false;
-    if (hasItemnum()) {
-      if (getItemnum()
-          != other.getItemnum()) return false;
-    }
+    if (java.lang.Double.doubleToLongBits(getId())
+        != java.lang.Double.doubleToLongBits(
+            other.getId())) return false;
+    if (java.lang.Float.floatToIntBits(getRationum())
+        != java.lang.Float.floatToIntBits(
+            other.getRationum())) return false;
+    if (getBarcode()
+        != other.getBarcode()) return false;
+    if (getItemnum()
+        != other.getItemnum()) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -218,24 +173,16 @@ private static final long serialVersionUID = 0L;
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
-    if (hasId()) {
-      hash = (37 * hash) + ID_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          java.lang.Double.doubleToLongBits(getId()));
-    }
-    if (hasRationum()) {
-      hash = (37 * hash) + RATIONUM_FIELD_NUMBER;
-      hash = (53 * hash) + java.lang.Float.floatToIntBits(
-          getRationum());
-    }
-    if (hasBarcode()) {
-      hash = (37 * hash) + BARCODE_FIELD_NUMBER;
-      hash = (53 * hash) + getBarcode();
-    }
-    if (hasItemnum()) {
-      hash = (37 * hash) + ITEMNUM_FIELD_NUMBER;
-      hash = (53 * hash) + getItemnum();
-    }
+    hash = (37 * hash) + ID_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+        java.lang.Double.doubleToLongBits(getId()));
+    hash = (37 * hash) + RATIONUM_FIELD_NUMBER;
+    hash = (53 * hash) + java.lang.Float.floatToIntBits(
+        getRationum());
+    hash = (37 * hash) + BARCODE_FIELD_NUMBER;
+    hash = (53 * hash) + getBarcode();
+    hash = (37 * hash) + ITEMNUM_FIELD_NUMBER;
+    hash = (53 * hash) + getItemnum();
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -404,24 +351,18 @@ private static final long serialVersionUID = 0L;
 
     private void buildPartial0(com.umut.yesevi.protobuf.AssetPro result) {
       int from_bitField0_ = bitField0_;
-      int to_bitField0_ = 0;
       if (((from_bitField0_ & 0x00000001) != 0)) {
         result.id_ = id_;
-        to_bitField0_ |= 0x00000001;
       }
       if (((from_bitField0_ & 0x00000002) != 0)) {
         result.rationum_ = rationum_;
-        to_bitField0_ |= 0x00000002;
       }
       if (((from_bitField0_ & 0x00000004) != 0)) {
         result.barcode_ = barcode_;
-        to_bitField0_ |= 0x00000004;
       }
       if (((from_bitField0_ & 0x00000008) != 0)) {
         result.itemnum_ = itemnum_;
-        to_bitField0_ |= 0x00000008;
       }
-      result.bitField0_ |= to_bitField0_;
     }
 
     @java.lang.Override
@@ -436,16 +377,16 @@ private static final long serialVersionUID = 0L;
 
     public Builder mergeFrom(com.umut.yesevi.protobuf.AssetPro other) {
       if (other == com.umut.yesevi.protobuf.AssetPro.getDefaultInstance()) return this;
-      if (other.hasId()) {
+      if (other.getId() != 0D) {
         setId(other.getId());
       }
-      if (other.hasRationum()) {
+      if (other.getRationum() != 0F) {
         setRationum(other.getRationum());
       }
-      if (other.hasBarcode()) {
+      if (other.getBarcode() != 0) {
         setBarcode(other.getBarcode());
       }
-      if (other.hasItemnum()) {
+      if (other.getItemnum() != 0) {
         setItemnum(other.getItemnum());
       }
       this.mergeUnknownFields(other.getUnknownFields());
@@ -513,15 +454,7 @@ private static final long serialVersionUID = 0L;
 
     private double id_ ;
     /**
-     * <code>optional double id = 1;</code>
-     * @return Whether the id field is set.
-     */
-    @java.lang.Override
-    public boolean hasId() {
-      return ((bitField0_ & 0x00000001) != 0);
-    }
-    /**
-     * <code>optional double id = 1;</code>
+     * <code>double id = 1;</code>
      * @return The id.
      */
     @java.lang.Override
@@ -529,7 +462,7 @@ private static final long serialVersionUID = 0L;
       return id_;
     }
     /**
-     * <code>optional double id = 1;</code>
+     * <code>double id = 1;</code>
      * @param value The id to set.
      * @return This builder for chaining.
      */
@@ -541,7 +474,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>optional double id = 1;</code>
+     * <code>double id = 1;</code>
      * @return This builder for chaining.
      */
     public Builder clearId() {
@@ -553,15 +486,7 @@ private static final long serialVersionUID = 0L;
 
     private float rationum_ ;
     /**
-     * <code>optional float rationum = 2;</code>
-     * @return Whether the rationum field is set.
-     */
-    @java.lang.Override
-    public boolean hasRationum() {
-      return ((bitField0_ & 0x00000002) != 0);
-    }
-    /**
-     * <code>optional float rationum = 2;</code>
+     * <code>float rationum = 2;</code>
      * @return The rationum.
      */
     @java.lang.Override
@@ -569,7 +494,7 @@ private static final long serialVersionUID = 0L;
       return rationum_;
     }
     /**
-     * <code>optional float rationum = 2;</code>
+     * <code>float rationum = 2;</code>
      * @param value The rationum to set.
      * @return This builder for chaining.
      */
@@ -581,7 +506,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>optional float rationum = 2;</code>
+     * <code>float rationum = 2;</code>
      * @return This builder for chaining.
      */
     public Builder clearRationum() {
@@ -593,15 +518,7 @@ private static final long serialVersionUID = 0L;
 
     private int barcode_ ;
     /**
-     * <code>optional int32 barcode = 3;</code>
-     * @return Whether the barcode field is set.
-     */
-    @java.lang.Override
-    public boolean hasBarcode() {
-      return ((bitField0_ & 0x00000004) != 0);
-    }
-    /**
-     * <code>optional int32 barcode = 3;</code>
+     * <code>int32 barcode = 3;</code>
      * @return The barcode.
      */
     @java.lang.Override
@@ -609,7 +526,7 @@ private static final long serialVersionUID = 0L;
       return barcode_;
     }
     /**
-     * <code>optional int32 barcode = 3;</code>
+     * <code>int32 barcode = 3;</code>
      * @param value The barcode to set.
      * @return This builder for chaining.
      */
@@ -621,7 +538,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>optional int32 barcode = 3;</code>
+     * <code>int32 barcode = 3;</code>
      * @return This builder for chaining.
      */
     public Builder clearBarcode() {
@@ -633,15 +550,7 @@ private static final long serialVersionUID = 0L;
 
     private int itemnum_ ;
     /**
-     * <code>optional int32 itemnum = 4;</code>
-     * @return Whether the itemnum field is set.
-     */
-    @java.lang.Override
-    public boolean hasItemnum() {
-      return ((bitField0_ & 0x00000008) != 0);
-    }
-    /**
-     * <code>optional int32 itemnum = 4;</code>
+     * <code>int32 itemnum = 4;</code>
      * @return The itemnum.
      */
     @java.lang.Override
@@ -649,7 +558,7 @@ private static final long serialVersionUID = 0L;
       return itemnum_;
     }
     /**
-     * <code>optional int32 itemnum = 4;</code>
+     * <code>int32 itemnum = 4;</code>
      * @param value The itemnum to set.
      * @return This builder for chaining.
      */
@@ -661,7 +570,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>optional int32 itemnum = 4;</code>
+     * <code>int32 itemnum = 4;</code>
      * @return This builder for chaining.
      */
     public Builder clearItemnum() {

@@ -1,5 +1,7 @@
 package com.umut.yesevi.main;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -18,12 +20,18 @@ import org.apache.avro.generic.GenericDatumWriter;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.*;
 import org.apache.avro.specific.SpecificDatumReader;
+import org.apache.thrift.TException;
+import org.apache.thrift.protocol.TCompactProtocol;
+import org.apache.thrift.transport.TIOStreamTransport;
+import org.apache.thrift.transport.TTransport;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.umut.yesevi.avro.EmployeeAvro;
 import com.umut.yesevi.protobuf.EmployeeArray;
 import com.umut.yesevi.protobuf.EmployeePro;
+import com.umut.yesevi.thrift.EmployeeList;
+import com.umut.yesevi.thrift.EmployeeThrift;
 
 public class main {
 	private final static String OUTPUT_PATH = "output/";
@@ -42,7 +50,8 @@ public class main {
 	// SIZE test variables
 	private static long totalFileSize = 0L;
 	private static List<Long> serializationSizes;
-	private static String[] serializedFileNames;
+	//private static String[] serializedFileNames;
+	private static List<String> serializedFileNames;
 
 	// TIME test variables:
 	private static long startTime = 0L;
@@ -52,7 +61,7 @@ public class main {
 	private static long totalDeserializationTime = 0L;
 	private static List<Long> deserializationTimes;
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, TException {
 		Scanner s = new Scanner(System.in);
 		System.out.println("Starting tests with string-numbers-set");
 
@@ -64,7 +73,7 @@ public class main {
 
 			// Wait user for CPU-RAM usage logs:
 			System.out.println("\nPress Enter key to start test JSON_test_size_" + test_size);
-			s.nextLine();
+//			s.nextLine();
 			// *-*-*-*-*-* START TO JSON TEST *-*-*-*-*-*-*-*-
 			System.out.println("STARTING TO JSON TEST....");
 			jsonEmployeeTest();
@@ -72,9 +81,20 @@ public class main {
 			printReport("STRING-NUMBERS-SET JSON REPORT");
 			System.out.println("END OF JSON TEST.");
 
+			// Wait user to CPU-RAM usage logs:
+			System.out.println("\nPress Enter key to start test THRIFT_test_size_" + test_size);
+//			s.nextLine();
+			// *-*-*-*-*-* START TO THRIFT TEST *-*-*-*-*-*-*-*-
+			System.out.println("STARTING THRIFT TEST....");
+			thriftEmployeeTest();
+			// Print report:
+			printReport("ONLY-NUMBERS-SET THRIFT REPORT");
+			System.out.println("END  OF THRIFT TEST.");
+
+
 			// Wait user for CPU-RAM usage logs:
 			System.out.println("\nPress Enter key to start test PROTOBUF_test_size_" + test_size);
-			s.nextLine();
+//			s.nextLine();
 			// *-*-*-*-*-* START TO PROTOBUF TEST *-*-*-*-*-*-*-*-
 			System.out.println("STARTING PROTOBUF TEST....");
 			protobufEmployeeTest();
@@ -84,7 +104,7 @@ public class main {
 
 			// Wait user to CPU-RAM usage logs:
 			System.out.println("\nPress Enter key to start test AVRO_test_size_" + test_size);
-			s.nextLine();
+//			s.nextLine();
 			// *-*-*-*-*-* START TO AVRO TEST *-*-*-*-*-*-*-*-
 			System.out.println("STARTING AVRO TEST....");
 			avroEmployeeTest();
@@ -117,7 +137,8 @@ public class main {
 		// Reseting SIZE test variables
 		totalFileSize = 0L;
 		serializationSizes = new ArrayList<Long>();
-		serializedFileNames = new String[REPEATING_NUMBER];
+		//serializedFileNames = new String[REPEATING_NUMBER];
+		serializedFileNames = new ArrayList<String>();
 
 		// Reseting TIME test variables:
 		startTime = 0L;
@@ -138,26 +159,30 @@ public class main {
 		outputFile = new File(path + fileName);
 
 		// save file names for deserialization:
-		serializedFileNames[element] = path + fileName;
+		//serializedFileNames[element] = path + fileName;
+		serializedFileNames.add(path + fileName);
 
 		// Set test variables:
 		startTime = System.currentTimeMillis();
 	}
 	
 
-	private static void afterSerialization() {
-		// Get test variables:
-		finishTime = System.currentTimeMillis();
+	private static void afterSerialization(int i) {
+		// Do not calculate first 3 processes:
+		if(i>2) {
+			// Get test variables:
+			finishTime = System.currentTimeMillis();
 
-		// set SIZE:
-		Long fileSize = outputFile.length();
-		serializationSizes.add(fileSize);
-		totalFileSize += fileSize;
+			// set SIZE:
+			Long fileSize = outputFile.length();
+			serializationSizes.add(fileSize);
+			totalFileSize += fileSize;
 
-		// set TIME:
-		Long timeForSerialization = finishTime - startTime;
-		serializationTimes.add(timeForSerialization);
-		totalSerializationTime += timeForSerialization;
+			// set TIME:
+			Long timeForSerialization = finishTime - startTime;
+			serializationTimes.add(timeForSerialization);
+			totalSerializationTime += timeForSerialization;
+		}
 	}
 	
 
@@ -167,14 +192,17 @@ public class main {
 	}
 	
 
-	private static void afterDeserialization() {
-		// Get test variables:
-		finishTime = System.currentTimeMillis();
+	private static void afterDeserialization(int i) {
+		// Do not calculate first 3 processes:
+		if(i>2) {
+			// Get test variables:
+			finishTime = System.currentTimeMillis();
 
-		// TIME min, max and total:
-		Long timeForDeserialization = finishTime - startTime;
-		deserializationTimes.add(timeForDeserialization);
-		totalDeserializationTime += timeForDeserialization;
+			// TIME min, max and total:
+			Long timeForDeserialization = finishTime - startTime;
+			deserializationTimes.add(timeForDeserialization);
+			totalDeserializationTime += timeForDeserialization;
+		}
 	}
 	
 
@@ -222,7 +250,7 @@ public class main {
 
 		// Starting JSON serialization:
 		System.out.println("Starting Json serialization....");
-		for (int i = 0; i < REPEATING_NUMBER; i++) {
+		for (int i = 0; i < REPEATING_NUMBER+3; i++) {	// Do not calculate first 3 progress
 			// Set test variables:
 			beforeSerialization("json", i);
 
@@ -230,20 +258,20 @@ public class main {
 			jsonEmployeeSerialization(employeeTestArray, outputFile);
 
 			// Get test variables:
-			afterSerialization();
+			afterSerialization(i);
 		}
 
 		// Starting JSON deserialization:
 		System.out.println("Starting Json deserialization....");
-		for (int i = 0; i < REPEATING_NUMBER; i++) {
+		for (int i = 0; i < REPEATING_NUMBER+3; i++) {	// Do not calculate first 3 progress
 			// Set test variables:
 			beforeDeserialization();
 
 			// Start deserialization:
-			jsonEmployeeDeserialization(new File(serializedFileNames[i]));
+			jsonEmployeeDeserialization(new File(serializedFileNames.get(i)));
 
 			// Get test variables:
-			afterDeserialization();
+			afterDeserialization(i);
 		}
 	}
 
@@ -264,9 +292,14 @@ public class main {
 			jsonArr.put(jsonObj);
 		}
 
+		try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outputFile))) {
+			bos.write(jsonArr.toString().getBytes());
+           }
+		/*
 		FileOutputStream jsonOutputStream = new FileOutputStream(outputFile);
 		jsonOutputStream.write(jsonArr.toString().getBytes());
 		jsonOutputStream.close();
+		*/
 	}
 
 	private static JSONArray jsonEmployeeDeserialization(File dataFile) throws IOException {
@@ -275,6 +308,72 @@ public class main {
 
 		return jsonArr;
 	}
+	
+
+	private static void thriftEmployeeTest() throws IOException, TException {
+		// reseting test variables:
+		resetVariables();
+
+		// Starting Thrift serialization:
+		System.out.println("Starting Thrift serialization....");
+		for (int i = 0; i < REPEATING_NUMBER+3; i++) {	// Do not calculate first 3 progress
+			// Set test variables:
+			beforeSerialization("thrift", i);
+
+			// Start serialization:
+			thriftEmployeeSerialization(employeeTestArray, outputFile);
+
+			// Get test variables:
+			afterSerialization(i);
+		}
+
+		// Starting Thrift deserialization:
+		System.out.println("Starting Thrift deserialization....");
+		for (int i = 0; i < REPEATING_NUMBER+3; i++) {	// Do not calculate first 3 progress
+			// Set test variables:
+			beforeDeserialization();
+
+			// Start deserialization:
+			thriftEmployeeDeserialization(new File(serializedFileNames.get(i)));
+
+			// Get test variables:
+			afterDeserialization(i);
+		}
+	}
+
+	
+    public static void thriftEmployeeSerialization(Employee[] testArray, File outputFile) throws TException, IOException {
+		// Creating thrift data array:
+    	EmployeeList thriftEmployeeList = new EmployeeList();
+		int len = testArray.length;
+		for (int i = 0; i < len; i++) {
+            EmployeeThrift employee = new EmployeeThrift();
+            employee.setRecid(testArray[i].getRecid());  
+            employee.setShare(testArray[i].getShare());
+            employee.setJobcode(testArray[i].getJobcode());
+            employee.setTitle(testArray[i].getTitle());
+            thriftEmployeeList.addToEmployees(employee);		
+		}
+		
+		// Serializing to disk.
+		try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outputFile));
+			     TTransport transport = new TIOStreamTransport(bos)) {
+        		TCompactProtocol protocol = new TCompactProtocol(transport);
+        		thriftEmployeeList.write(protocol);  
+           }
+    }
+
+    
+    public static EmployeeList thriftEmployeeDeserialization(File dataFile) throws TException, IOException {
+        EmployeeList thriftList = new EmployeeList();
+        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(dataFile));
+        	     TTransport transport = new TIOStreamTransport(bis)){
+        	TCompactProtocol protocol = new TCompactProtocol(transport);
+            thriftList.read(protocol);
+        }
+        return thriftList;
+    }
+	
 
 	private static void protobufEmployeeTest() throws IOException {
 		// reseting test variables:
@@ -282,7 +381,7 @@ public class main {
 
 		// Starting Protobuf serialization:
 		System.out.println("Starting Protobuf serialization....");
-		for (int i = 0; i < REPEATING_NUMBER; i++) {
+		for (int i = 0; i < REPEATING_NUMBER+3; i++) {	// Do not calculate first 3 progress
 			// Set test variables:
 			beforeSerialization("protobuf", i);
 
@@ -290,20 +389,20 @@ public class main {
 			protobufEmployeeSerialization(employeeTestArray, outputFile);
 
 			// Get test variables:
-			afterSerialization();
+			afterSerialization(i);
 		}
 
 		// Starting Protobuf deserialization:
 		System.out.println("Starting Protobuf deserialization....");
-		for (int i = 0; i < REPEATING_NUMBER; i++) {
+		for (int i = 0; i < REPEATING_NUMBER+3; i++) {	// Do not calculate first 3 progress
 			// Set test variables:
 			beforeDeserialization();
 
 			// Start deserialization:
-			protobufEmployeeDeserialization(new File(serializedFileNames[i]));
+			protobufEmployeeDeserialization(new File(serializedFileNames.get(i)));
 
 			// Get test variables:
-			afterDeserialization();
+			afterDeserialization(i);
 		}
 	}
 
@@ -323,13 +422,15 @@ public class main {
 		}
 
 		// Serializing to disk.
-		FileOutputStream output = new FileOutputStream(outputFile);
-		proArrayBuilder.build().writeTo(output);
-		output.close();
+		// FileOutputStream output = new FileOutputStream(outputFile);
+		try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outputFile))) {
+			proArrayBuilder.build().writeTo(bos);  
+           }
 	}
 
 	private static EmployeeArray protobufEmployeeDeserialization(File dataFile) throws IOException {
-		EmployeeArray proArray = EmployeeArray.parseFrom(new FileInputStream(dataFile.getPath()));
+		//EmployeeArray proArray = EmployeeArray.parseFrom(new FileInputStream(dataFile.getPath()));
+		EmployeeArray proArray = EmployeeArray.parseFrom(new BufferedInputStream(new FileInputStream(dataFile)));
 		return proArray;
 	}
 
@@ -342,7 +443,7 @@ public class main {
 
 		// Starting Avro serialization:
 		System.out.println("Starting Avro serialization....");
-		for (int i = 0; i < REPEATING_NUMBER; i++) {
+		for (int i = 0; i < REPEATING_NUMBER+3; i++) {	// Do not calculate first 3 progress
 			// Set test variables:
 			beforeSerialization("avro", i);
 
@@ -350,20 +451,20 @@ public class main {
 			avroEmployeeSerialization(avroSchema, employeeTestArray, outputFile);
 
 			// Get test variables:
-			afterSerialization();
+			afterSerialization(i);
 		}
 
 		// Starting Avro deserialization:
 		System.out.println("Starting Avro deserialization....");
-		for (int i = 0; i < REPEATING_NUMBER; i++) {
+		for (int i = 0; i < REPEATING_NUMBER+3; i++) {	// Do not calculate first 3 progress
 			// Set test variables:
 			beforeDeserialization();
 
 			// Start deserialization:
-			avroEmployeeDeserialization(avroSchema, new File(serializedFileNames[i]));
+			avroEmployeeDeserialization(avroSchema, new File(serializedFileNames.get(i)));
 
 			// Get test variables:
-			afterDeserialization();
+			afterDeserialization(i);
 		}
 	}
 

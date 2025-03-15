@@ -1,10 +1,23 @@
-{"namespace": "com.umut.yesevi.avro",
- "type": "record",
- "name": "AssetAvro",
- "fields": [
-     {"name": "id", "type": "double"},
-     {"name": "rationum", "type": "float"},
-     {"name": "barcode", "type": "int"},
-     {"name": "itemnum", "type": "int"}
- ]
+{
+    "namespace": "com.umut.yesevi.avro",
+    "type": "record",
+    "name": "AssetArrayAvro",
+    "fields": [
+        {
+            "name": "assets",
+            "type": {
+                "type": "array",
+                "items": {
+                    "name": "AssetAvro",
+                    "type": "record",
+                    "fields": [
+                        { "name": "id", "type": "double" },
+                        { "name": "rationum", "type": "float" },
+                        { "name": "barcode", "type": "int" },
+                        { "name": "itemnum", "type": "int" }
+                    ]
+                }
+            }
+        }
+    ]
 }
