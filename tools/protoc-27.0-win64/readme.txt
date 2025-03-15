@@ -13,7 +13,13 @@ Please refer to our official github site for more installation instructions:
 
 
 
+
+
 FOR YESEVİ ASSET PROTO:
-protoc.exe --java_out=asset/ asset.proto
+protoc.exe --java_out=asset/ asset/asset.proto
+
+
+FOR YESEVİ EMPLOYEE PROTO:
+protoc.exe --java_out=employee/ employee/employee.proto
 
 

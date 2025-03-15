@@ -15,11 +15,10 @@ import java.util.Scanner;
 import org.apache.avro.Schema;
 import org.apache.avro.file.DataFileReader;
 import org.apache.avro.file.DataFileWriter;
-import org.apache.avro.generic.GenericData;
-import org.apache.avro.generic.GenericDatumWriter;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.*;
 import org.apache.avro.specific.SpecificDatumReader;
+import org.apache.avro.specific.SpecificDatumWriter;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TCompactProtocol;
 import org.apache.thrift.transport.TIOStreamTransport;
@@ -27,9 +26,10 @@ import org.apache.thrift.transport.TTransport;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.umut.yesevi.avro.EmployeeArrayAvro;
 import com.umut.yesevi.avro.EmployeeAvro;
-import com.umut.yesevi.protobuf.EmployeeArray;
-import com.umut.yesevi.protobuf.EmployeePro;
+import com.umut.yesevi.protobuf.EmployeeProtoArray;
+import com.umut.yesevi.protobuf.EmployeeProto;
 import com.umut.yesevi.thrift.EmployeeList;
 import com.umut.yesevi.thrift.EmployeeThrift;
 
@@ -50,7 +50,6 @@ public class main {
 	// SIZE test variables
 	private static long totalFileSize = 0L;
 	private static List<Long> serializationSizes;
-	//private static String[] serializedFileNames;
 	private static List<String> serializedFileNames;
 
 	// TIME test variables:
@@ -408,8 +407,8 @@ public class main {
 
 	private static void protobufEmployeeSerialization(Employee[] testArray, File outputFile) throws IOException {
 		// Protobuf builders:
-		EmployeePro.Builder proBuilder = EmployeePro.newBuilder();
-		EmployeeArray.Builder proArrayBuilder = EmployeeArray.newBuilder();
+		EmployeeProto.Builder proBuilder = EmployeeProto.newBuilder();
+		EmployeeProtoArray.Builder proArrayBuilder = EmployeeProtoArray.newBuilder();
 
 		// Creating protobuf data array:
 		int len = testArray.length;
@@ -422,15 +421,13 @@ public class main {
 		}
 
 		// Serializing to disk.
-		// FileOutputStream output = new FileOutputStream(outputFile);
 		try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outputFile))) {
 			proArrayBuilder.build().writeTo(bos);  
            }
 	}
 
-	private static EmployeeArray protobufEmployeeDeserialization(File dataFile) throws IOException {
-		//EmployeeArray proArray = EmployeeArray.parseFrom(new FileInputStream(dataFile.getPath()));
-		EmployeeArray proArray = EmployeeArray.parseFrom(new BufferedInputStream(new FileInputStream(dataFile)));
+	private static EmployeeProtoArray protobufEmployeeDeserialization(File dataFile) throws IOException {
+		EmployeeProtoArray proArray = EmployeeProtoArray.parseFrom(new BufferedInputStream(new FileInputStream(dataFile)));
 		return proArray;
 	}
 
@@ -448,7 +445,7 @@ public class main {
 			beforeSerialization("avro", i);
 
 			// Start serialization:
-			avroEmployeeSerialization(avroSchema, employeeTestArray, outputFile);
+			avroEmployeeSerialization(employeeTestArray, outputFile);
 
 			// Get test variables:
 			afterSerialization(i);
@@ -461,44 +458,48 @@ public class main {
 			beforeDeserialization();
 
 			// Start deserialization:
-			avroEmployeeDeserialization(avroSchema, new File(serializedFileNames.get(i)));
+			avroEmployeeDeserialization(new File(serializedFileNames.get(i)));
 
 			// Get test variables:
 			afterDeserialization(i);
 		}
 	}
 
-	private static void avroEmployeeSerialization(Schema schema, Employee[] testArray, File outputFile) throws IOException {
-		DatumWriter<GenericRecord> datumWriter = new GenericDatumWriter<GenericRecord>(schema);
-		DataFileWriter<GenericRecord> dataFileWriter = new DataFileWriter<GenericRecord>(datumWriter);
-		dataFileWriter.create(schema, outputFile);
+	private static void avroEmployeeSerialization(Employee[] testArray, File outputFile) throws IOException {		
+		DatumWriter<EmployeeArrayAvro> datumWriter = new SpecificDatumWriter<EmployeeArrayAvro>(EmployeeArrayAvro.class);
+		try (DataFileWriter<EmployeeArrayAvro> dataFileWriter = new DataFileWriter<EmployeeArrayAvro>(datumWriter);) {
+			//dataFileWriter.create(schema, outputFile);
+			// create AVRO list with assets:
+			List<EmployeeAvro> employeeList = new ArrayList<>();	
+			for(Employee employee:testArray) {
+				employeeList.add(EmployeeAvro.newBuilder()
+						.setRecid(employee.getRecid())
+						.setShare(employee.getShare())
+						.setJobcode(employee.getJobcode())
+						.setTitle(employee.getTitle())
+						.build());
+			}	
+			// Create AVRO array:
+			EmployeeArrayAvro employeeArrayAvro =  new EmployeeArrayAvro(employeeList);
 
-		// create AVRO records:
-		int arrayLength = testArray.length;
-		for (int i = 0; i < arrayLength; i++) {
-			GenericRecord avroRecord = new GenericData.Record(schema);
-			avroRecord.put("recid", testArray[i].getRecid());
-			avroRecord.put("share", testArray[i].getShare());
-			avroRecord.put("jobcode", testArray[i].getJobcode());
-			avroRecord.put("title", testArray[i].getTitle());
-			dataFileWriter.append(avroRecord);
+			// Write AVRO array to file:
+			dataFileWriter.create(EmployeeArrayAvro.getClassSchema(), outputFile);
+			dataFileWriter.append(employeeArrayAvro);
 		}
-		dataFileWriter.close();
 	}
 
-	private static EmployeeAvro[] avroEmployeeDeserialization(Schema schema, File dataFile) throws IOException {
-		EmployeeAvro[] avroArray = new EmployeeAvro[test_size];
+	private static List<EmployeeArrayAvro> avroEmployeeDeserialization(File dataFile) throws IOException {
 
-		DatumReader<EmployeeAvro> datumReader = new SpecificDatumReader<EmployeeAvro>(EmployeeAvro.class);
-		DataFileReader<EmployeeAvro> dataFileReader = new DataFileReader<EmployeeAvro>(dataFile, datumReader);
-
-		int i = 0;
-		while (dataFileReader.hasNext()) {
-			avroArray[i++] = dataFileReader.next();
+		DatumReader<EmployeeArrayAvro> datumReader = new SpecificDatumReader<EmployeeArrayAvro>(EmployeeArrayAvro.class);
+		List<EmployeeArrayAvro> employeeArray = null ;
+        try (DataFileReader<EmployeeArrayAvro> dataFileReader = new DataFileReader<EmployeeArrayAvro>(dataFile, datumReader)) {
+			while (dataFileReader.hasNext()) {
+			    GenericRecord record = dataFileReader.next();
+			    employeeArray =  (List<EmployeeArrayAvro>) record.get("employees");
+			}
+			return employeeArray;
 		}
-		dataFileReader.close();
-
-		return avroArray;
 	}
-
+	
+	
 }

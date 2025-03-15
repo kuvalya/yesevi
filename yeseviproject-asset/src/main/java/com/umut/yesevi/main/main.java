@@ -12,14 +12,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
-import org.apache.avro.Schema;
 import org.apache.avro.file.DataFileReader;
 import org.apache.avro.file.DataFileWriter;
-import org.apache.avro.generic.GenericData;
-import org.apache.avro.generic.GenericDatumReader;
-import org.apache.avro.generic.GenericDatumWriter;
 import org.apache.avro.generic.GenericRecord;
-import org.apache.avro.generic.GenericRecordBuilder;
 import org.apache.avro.io.*;
 import org.apache.avro.specific.SpecificDatumReader;
 import org.apache.avro.specific.SpecificDatumWriter;
@@ -32,8 +27,8 @@ import org.json.JSONObject;
 
 import com.umut.yesevi.avro.AssetArrayAvro;
 import com.umut.yesevi.avro.AssetAvro;
-import com.umut.yesevi.protobuf.AssetArray;
-import com.umut.yesevi.protobuf.AssetPro; 
+import com.umut.yesevi.protobuf.AssetProtoArray;
+import com.umut.yesevi.protobuf.AssetProto; 
 import com.umut.yesevi.thrift.AssetList;
 import com.umut.yesevi.thrift.AssetThrift;
 
@@ -42,11 +37,11 @@ public class main {
 	private static File outputFile;
 
 	// number of objects to be tested:
-	private final static int BASE_TEST_SIZE = 1_00;
+	private final static int BASE_TEST_SIZE = 1_000;
 	private static int test_size;
 
 	// Repeating number:
-	private final static int REPEATING_NUMBER = 1_00; 
+	private final static int REPEATING_NUMBER = 1_000; 
 
 	// test data that will be used for all serialization methods: 
 	private static Asset[] assetTestArray;
@@ -54,7 +49,6 @@ public class main {
 	// SIZE test variables
 	private static long totalFileSize = 0L;
 	private static List<Long> serializationSizes;
-	//private static String[] serializedFileNames;
 	private static List<String> serializedFileNames;
 
 	// TIME test variables:
@@ -410,8 +404,8 @@ public class main {
 
 	private static void protobufAssetSerialization(Asset[] testArray, File outputFile) throws IOException {
 		// Protobuf builders:
-		AssetPro.Builder proBuilder = AssetPro.newBuilder();
-		AssetArray.Builder proArrayBuilder = AssetArray.newBuilder();
+		AssetProto.Builder proBuilder = AssetProto.newBuilder();
+		AssetProtoArray.Builder proArrayBuilder = AssetProtoArray.newBuilder();
 
 		// Creating protobuf data array:
 		int len = testArray.length;
@@ -430,9 +424,9 @@ public class main {
            }
 	}
 
-	private static AssetArray protobufAssetDeserialization(File dataFile) throws IOException {
+	private static AssetProtoArray protobufAssetDeserialization(File dataFile) throws IOException {
 		//AssetArray proArray = AssetArray.parseFrom(new FileInputStream(dataFile.getPath()));
-		AssetArray proArray = AssetArray.parseFrom(new BufferedInputStream(new FileInputStream(dataFile)));
+		AssetProtoArray proArray = AssetProtoArray.parseFrom(new BufferedInputStream(new FileInputStream(dataFile)));
 		return proArray;
 	}
 
