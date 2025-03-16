@@ -23,3 +23,7 @@ FOR YESEVİ EMPLOYEE PROTO:
 protoc.exe --java_out=employee/ employee/employee.proto
 
 
+FOR YESEVİ PERSONPROTO:
+protoc.exe --java_out=person/ person/person.proto
+
+
