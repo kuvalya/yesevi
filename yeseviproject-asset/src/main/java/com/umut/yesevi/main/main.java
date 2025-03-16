@@ -40,7 +40,7 @@ public class main {
 	private final static int BASE_TEST_SIZE = 1_000;
 	private static int test_size;
 
-	// Repeating number:
+	// repating number:
 	private final static int REPEATING_NUMBER = 1_000; 
 
 	// test data that will be used for all serialization methods: 
@@ -71,7 +71,7 @@ public class main {
 
 			// Wait user for CPU-RAM usage logs:
 			System.out.println("\nPress Enter key to start test JSON_test_size_" + test_size);
-//			s.nextLine();
+			s.nextLine();
 			// *-*-*-*-*-* START TO JSON TEST *-*-*-*-*-*-*-*-
 			System.out.println("STARTING TO JSON TEST....");
 			jsonAssetTest();
@@ -81,7 +81,7 @@ public class main {
 
 			// Wait user to CPU-RAM usage logs:
 			System.out.println("\nPress Enter key to start test THRIFT_test_size_" + test_size);
-//			s.nextLine();
+			s.nextLine();
 			// *-*-*-*-*-* START TO THRIFT TEST *-*-*-*-*-*-*-*-
 			System.out.println("STARTING THRIFT TEST....");
 			thriftAssetTest();
@@ -91,7 +91,7 @@ public class main {
 
 			// Wait user for CPU-RAM usage logs:
 			System.out.println("\nPress Enter key to start test PROTOBUF_test_size_" + test_size);
-//			s.nextLine();
+			s.nextLine();
 			// *-*-*-*-*-* START TO PROTOBUF TEST *-*-*-*-*-*-*-*-
 			System.out.println("STARTING PROTOBUF TEST....");
 			protobufAssetTest();
@@ -101,7 +101,7 @@ public class main {
 
 			// Wait user to CPU-RAM usage logs:
 			System.out.println("\nPress Enter key to start test AVRO_test_size_" + test_size);
-//			s.nextLine();
+			s.nextLine();
 			// *-*-*-*-*-* START TO AVRO TEST *-*-*-*-*-*-*-*-
 			System.out.println("STARTING AVRO TEST....");
 			avroAssetTest();
@@ -138,7 +138,6 @@ public class main {
 		// Reseting SIZE test variables
 		totalFileSize = 0L;
 		serializationSizes = new ArrayList<Long>();
-		//serializedFileNames = new String[REPEATING_NUMBER];
 		serializedFileNames = new ArrayList<String>();
 
 		// Reseting TIME test variables:
@@ -153,14 +152,10 @@ public class main {
 	private static void beforeSerialization(String fileSuffix, int element) {
 		// setting output file:
 		String fileName = fileSuffix + "Test_" + test_size + "_" + System.currentTimeMillis() + "." + fileSuffix;
-
-		// String path = OUTPUT_PATH + fileSuffix + "/";
 		String path = OUTPUT_PATH;
-
 		outputFile = new File(path + fileName);
 
 		// save file names for deserialization:
-		//serializedFileNames[element] = path + fileName;
 		serializedFileNames.add(path + fileName);
 
 		// Set test variables:
@@ -169,11 +164,10 @@ public class main {
 	
 
 	private static void afterSerialization(int i) {
+		// Get test variables:
+		finishTime = System.currentTimeMillis();
 		// Do not calculate first 3 processes:
 		if(i>2) {
-			// Get test variables:
-			finishTime = System.currentTimeMillis();
-
 			// set SIZE:
 			Long fileSize = outputFile.length();
 			serializationSizes.add(fileSize);
@@ -194,12 +188,11 @@ public class main {
 	
 
 	private static void afterDeserialization(int i) {
+		// Get test variables:
+		finishTime = System.currentTimeMillis();
 		// Do not calculate first 3 processes:
 		if(i>2) {
-			// Get test variables:
-			finishTime = System.currentTimeMillis();
-	
-			// TIME min, max and total:
+			// Set TIME:
 			Long timeForDeserialization = finishTime - startTime;
 			deserializationTimes.add(timeForDeserialization);
 			totalDeserializationTime += timeForDeserialization;
@@ -418,15 +411,16 @@ public class main {
 		}
 
 		// Serializing to disk.
-		// FileOutputStream output = new FileOutputStream(outputFile);
 		try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outputFile))) {
 			proArrayBuilder.build().writeTo(bos);  
            }
 	}
 
 	private static AssetProtoArray protobufAssetDeserialization(File dataFile) throws IOException {
-		//AssetArray proArray = AssetArray.parseFrom(new FileInputStream(dataFile.getPath()));
-		AssetProtoArray proArray = AssetProtoArray.parseFrom(new BufferedInputStream(new FileInputStream(dataFile)));
+		AssetProtoArray proArray = null;
+		try(BufferedInputStream bis = new BufferedInputStream(new FileInputStream(dataFile))) {
+			AssetProtoArray.parseFrom(bis);			
+		}
 		return proArray;
 	}
 
@@ -464,8 +458,7 @@ public class main {
 	private static void avroAssetSerialization(Asset[] testArray, File outputFile) throws IOException {		
 		DatumWriter<AssetArrayAvro> datumWriter = new SpecificDatumWriter<AssetArrayAvro>(AssetArrayAvro.class);
 		try (DataFileWriter<AssetArrayAvro> dataFileWriter = new DataFileWriter<AssetArrayAvro>(datumWriter);) {
-			//dataFileWriter.create(schema, outputFile);
-			// create AVRO list with assets:
+			// create AVRO list:
 			List<AssetAvro> assetList = new ArrayList<>();	
 			for(Asset asset:testArray) {
 				assetList.add(AssetAvro.newBuilder()
@@ -485,7 +478,6 @@ public class main {
 	}
 
 	private static List<AssetArrayAvro> avroAssetDeserialization(File dataFile) throws IOException {
-
 		DatumReader<AssetArrayAvro> datumReader = new SpecificDatumReader<AssetArrayAvro>(AssetArrayAvro.class);
 		List<AssetArrayAvro> avroArray = null ;
         try (DataFileReader<AssetArrayAvro> dataFileReader = new DataFileReader<AssetArrayAvro>(dataFile, datumReader)) {

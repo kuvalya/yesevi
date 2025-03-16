@@ -12,7 +12,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
-import org.apache.avro.Schema;
 import org.apache.avro.file.DataFileReader;
 import org.apache.avro.file.DataFileWriter;
 import org.apache.avro.generic.GenericRecord;
@@ -72,7 +71,7 @@ public class main {
 
 			// Wait user for CPU-RAM usage logs:
 			System.out.println("\nPress Enter key to start test JSON_test_size_" + test_size);
-//			s.nextLine();
+			s.nextLine();
 			// *-*-*-*-*-* START TO JSON TEST *-*-*-*-*-*-*-*-
 			System.out.println("STARTING TO JSON TEST....");
 			jsonEmployeeTest();
@@ -82,7 +81,7 @@ public class main {
 
 			// Wait user to CPU-RAM usage logs:
 			System.out.println("\nPress Enter key to start test THRIFT_test_size_" + test_size);
-//			s.nextLine();
+			s.nextLine();
 			// *-*-*-*-*-* START TO THRIFT TEST *-*-*-*-*-*-*-*-
 			System.out.println("STARTING THRIFT TEST....");
 			thriftEmployeeTest();
@@ -90,10 +89,9 @@ public class main {
 			printReport("ONLY-NUMBERS-SET THRIFT REPORT");
 			System.out.println("END  OF THRIFT TEST.");
 
-
 			// Wait user for CPU-RAM usage logs:
 			System.out.println("\nPress Enter key to start test PROTOBUF_test_size_" + test_size);
-//			s.nextLine();
+			s.nextLine();
 			// *-*-*-*-*-* START TO PROTOBUF TEST *-*-*-*-*-*-*-*-
 			System.out.println("STARTING PROTOBUF TEST....");
 			protobufEmployeeTest();
@@ -103,7 +101,7 @@ public class main {
 
 			// Wait user to CPU-RAM usage logs:
 			System.out.println("\nPress Enter key to start test AVRO_test_size_" + test_size);
-//			s.nextLine();
+			s.nextLine();
 			// *-*-*-*-*-* START TO AVRO TEST *-*-*-*-*-*-*-*-
 			System.out.println("STARTING AVRO TEST....");
 			avroEmployeeTest();
@@ -136,7 +134,6 @@ public class main {
 		// Reseting SIZE test variables
 		totalFileSize = 0L;
 		serializationSizes = new ArrayList<Long>();
-		//serializedFileNames = new String[REPEATING_NUMBER];
 		serializedFileNames = new ArrayList<String>();
 
 		// Reseting TIME test variables:
@@ -151,14 +148,10 @@ public class main {
 	private static void beforeSerialization(String fileSuffix, int element) {
 		// setting output file:
 		String fileName = fileSuffix + "Test_" + test_size + "_" + System.currentTimeMillis() + "." + fileSuffix;
-
-		// String path = OUTPUT_PATH + fileSuffix + "/";
 		String path = OUTPUT_PATH;
-
 		outputFile = new File(path + fileName);
 
 		// save file names for deserialization:
-		//serializedFileNames[element] = path + fileName;
 		serializedFileNames.add(path + fileName);
 
 		// Set test variables:
@@ -167,11 +160,10 @@ public class main {
 	
 
 	private static void afterSerialization(int i) {
+		// Get test variables:
+		finishTime = System.currentTimeMillis();
 		// Do not calculate first 3 processes:
 		if(i>2) {
-			// Get test variables:
-			finishTime = System.currentTimeMillis();
-
 			// set SIZE:
 			Long fileSize = outputFile.length();
 			serializationSizes.add(fileSize);
@@ -192,12 +184,11 @@ public class main {
 	
 
 	private static void afterDeserialization(int i) {
+		// Get test variables:
+		finishTime = System.currentTimeMillis();
 		// Do not calculate first 3 processes:
 		if(i>2) {
-			// Get test variables:
-			finishTime = System.currentTimeMillis();
-
-			// TIME min, max and total:
+			// Set TIME:
 			Long timeForDeserialization = finishTime - startTime;
 			deserializationTimes.add(timeForDeserialization);
 			totalDeserializationTime += timeForDeserialization;
@@ -294,11 +285,6 @@ public class main {
 		try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outputFile))) {
 			bos.write(jsonArr.toString().getBytes());
            }
-		/*
-		FileOutputStream jsonOutputStream = new FileOutputStream(outputFile);
-		jsonOutputStream.write(jsonArr.toString().getBytes());
-		jsonOutputStream.close();
-		*/
 	}
 
 	private static JSONArray jsonEmployeeDeserialization(File dataFile) throws IOException {
@@ -362,7 +348,6 @@ public class main {
            }
     }
 
-    
     public static EmployeeList thriftEmployeeDeserialization(File dataFile) throws TException, IOException {
         EmployeeList thriftList = new EmployeeList();
         try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(dataFile));
@@ -372,8 +357,8 @@ public class main {
         }
         return thriftList;
     }
-	
 
+    
 	private static void protobufEmployeeTest() throws IOException {
 		// reseting test variables:
 		resetVariables();
@@ -427,16 +412,16 @@ public class main {
 	}
 
 	private static EmployeeProtoArray protobufEmployeeDeserialization(File dataFile) throws IOException {
-		EmployeeProtoArray proArray = EmployeeProtoArray.parseFrom(new BufferedInputStream(new FileInputStream(dataFile)));
+		EmployeeProtoArray proArray = null;
+		try(BufferedInputStream bis = new BufferedInputStream(new FileInputStream(dataFile))) {
+			proArray = EmployeeProtoArray.parseFrom(bis);
+		}
 		return proArray;
 	}
 
 	private static void avroEmployeeTest() throws IOException {
 		// reseting test variables:
 		resetVariables();
-
-		// create AVRO schema:
-		Schema avroSchema = new Schema.Parser().parse(new File("avro/employee.avsc"));
 
 		// Starting Avro serialization:
 		System.out.println("Starting Avro serialization....");
@@ -468,8 +453,7 @@ public class main {
 	private static void avroEmployeeSerialization(Employee[] testArray, File outputFile) throws IOException {		
 		DatumWriter<EmployeeArrayAvro> datumWriter = new SpecificDatumWriter<EmployeeArrayAvro>(EmployeeArrayAvro.class);
 		try (DataFileWriter<EmployeeArrayAvro> dataFileWriter = new DataFileWriter<EmployeeArrayAvro>(datumWriter);) {
-			//dataFileWriter.create(schema, outputFile);
-			// create AVRO list with assets:
+			// create AVRO list:
 			List<EmployeeAvro> employeeList = new ArrayList<>();	
 			for(Employee employee:testArray) {
 				employeeList.add(EmployeeAvro.newBuilder()
@@ -489,7 +473,6 @@ public class main {
 	}
 
 	private static List<EmployeeArrayAvro> avroEmployeeDeserialization(File dataFile) throws IOException {
-
 		DatumReader<EmployeeArrayAvro> datumReader = new SpecificDatumReader<EmployeeArrayAvro>(EmployeeArrayAvro.class);
 		List<EmployeeArrayAvro> employeeArray = null ;
         try (DataFileReader<EmployeeArrayAvro> dataFileReader = new DataFileReader<EmployeeArrayAvro>(dataFile, datumReader)) {

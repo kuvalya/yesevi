@@ -1,6 +1,0 @@
-
-	private double recid;
-	private float share;
-	private int jobcode;
-	private String title;
-	
