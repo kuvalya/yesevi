@@ -1,0 +1,8 @@
+{"namespace": "com.umut.yesevi.avro",
+ "type": "record",
+ "name": "FileAvro",
+ "fields": [
+     {"name": "filename", "type": "string"},
+     {"name": "filebytes", "type": "bytes"}
+ ]
+}

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.ua.yeseviproject</groupId>
+	<artifactId>yeseviproject-core</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+
+	<properties>
+		<slf4j.version>2.0.13</slf4j.version>
+		<json.version>20240303</json.version>
+		<avro.version>1.11.3</avro.version>
+		<protobuf.version>4.27.0</protobuf.version>
+	</properties>
+
+	<dependencies>
+		<!-- https://mvnrepository.com/artifact/org.apache.avro/avro -->
+		<dependency>
+			<groupId>org.apache.avro</groupId>
+			<artifactId>avro</artifactId>
+			<version>${avro.version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.json/json -->
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>${json.version}</version>
+		</dependency>
+
+		<!--
+		https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
+		<dependency>
+			<groupId>com.google.protobuf</groupId>
+			<artifactId>protobuf-java</artifactId>
+			<version>${protobuf.version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+	</dependencies>
+
+	<plugin>
+		<groupId>org.apache.avro</groupId>
+		<artifactId>avro-maven-plugin</artifactId>
+		<version>1.11.1</version>
+		<executions>
+			<execution>
+				<phase>generate-sources</phase>
+				<goals>
+					<goal>schema</goal>
+				</goals>
+				<configuration>
+					<sourceDirectory>${project.basedir}/src/main/avro/</sourceDirectory>
+					<outputDirectory>${project.basedir}/src/main/java/</outputDirectory>
+				</configuration>
+			</execution>
+		</executions>
+	</plugin>
+	<plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-compiler-plugin</artifactId>
+		<configuration>
+			<source>1.8</source>
+			<target>1.8</target>
+		</configuration>
+	</plugin>
+
+</project>
