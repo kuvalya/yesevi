@@ -1,0 +1,3 @@
+https://thrift.apache.org/
+https://www.javadoc.io/doc/org.apache.thrift/libthrift/latest/org/apache/thrift/transport/TTransport.html
+https://www.baeldung.com/apache-thrift
