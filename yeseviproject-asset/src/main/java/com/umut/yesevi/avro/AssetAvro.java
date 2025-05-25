@@ -14,10 +14,10 @@ import org.apache.avro.message.SchemaStore;
 
 @org.apache.avro.specific.AvroGenerated
 public class AssetAvro extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = 8692079514992698462L;
+  private static final long serialVersionUID = -3874109486493320655L;
 
 
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"AssetAvro\",\"namespace\":\"com.umut.yesevi.avro\",\"fields\":[{\"name\":\"id\",\"type\":\"double\"},{\"name\":\"barcode\",\"type\":\"int\"},{\"name\":\"itemnum\",\"type\":\"int\"},{\"name\":\"rationum\",\"type\":\"float\"}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"AssetAvro\",\"namespace\":\"com.umut.yesevi.avro\",\"fields\":[{\"name\":\"id\",\"type\":\"double\"},{\"name\":\"rationum\",\"type\":\"float\"},{\"name\":\"barcode\",\"type\":\"int\"},{\"name\":\"itemnum\",\"type\":\"int\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static final SpecificData MODEL$ = new SpecificData();
@@ -74,9 +74,9 @@ public class AssetAvro extends org.apache.avro.specific.SpecificRecordBase imple
   }
 
   private double id;
+  private float rationum;
   private int barcode;
   private int itemnum;
-  private float rationum;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -88,15 +88,15 @@ public class AssetAvro extends org.apache.avro.specific.SpecificRecordBase imple
   /**
    * All-args constructor.
    * @param id The new value for id
+   * @param rationum The new value for rationum
    * @param barcode The new value for barcode
    * @param itemnum The new value for itemnum
-   * @param rationum The new value for rationum
    */
-  public AssetAvro(java.lang.Double id, java.lang.Integer barcode, java.lang.Integer itemnum, java.lang.Float rationum) {
+  public AssetAvro(java.lang.Double id, java.lang.Float rationum, java.lang.Integer barcode, java.lang.Integer itemnum) {
     this.id = id;
+    this.rationum = rationum;
     this.barcode = barcode;
     this.itemnum = itemnum;
-    this.rationum = rationum;
   }
 
   @Override
@@ -110,9 +110,9 @@ public class AssetAvro extends org.apache.avro.specific.SpecificRecordBase imple
   public java.lang.Object get(int field$) {
     switch (field$) {
     case 0: return id;
-    case 1: return barcode;
-    case 2: return itemnum;
-    case 3: return rationum;
+    case 1: return rationum;
+    case 2: return barcode;
+    case 3: return itemnum;
     default: throw new IndexOutOfBoundsException("Invalid index: " + field$);
     }
   }
@@ -123,9 +123,9 @@ public class AssetAvro extends org.apache.avro.specific.SpecificRecordBase imple
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
     case 0: id = (java.lang.Double)value$; break;
-    case 1: barcode = (java.lang.Integer)value$; break;
-    case 2: itemnum = (java.lang.Integer)value$; break;
-    case 3: rationum = (java.lang.Float)value$; break;
+    case 1: rationum = (java.lang.Float)value$; break;
+    case 2: barcode = (java.lang.Integer)value$; break;
+    case 3: itemnum = (java.lang.Integer)value$; break;
     default: throw new IndexOutOfBoundsException("Invalid index: " + field$);
     }
   }
@@ -145,6 +145,23 @@ public class AssetAvro extends org.apache.avro.specific.SpecificRecordBase imple
    */
   public void setId(double value) {
     this.id = value;
+  }
+
+  /**
+   * Gets the value of the 'rationum' field.
+   * @return The value of the 'rationum' field.
+   */
+  public float getRationum() {
+    return rationum;
+  }
+
+
+  /**
+   * Sets the value of the 'rationum' field.
+   * @param value the value to set.
+   */
+  public void setRationum(float value) {
+    this.rationum = value;
   }
 
   /**
@@ -179,23 +196,6 @@ public class AssetAvro extends org.apache.avro.specific.SpecificRecordBase imple
    */
   public void setItemnum(int value) {
     this.itemnum = value;
-  }
-
-  /**
-   * Gets the value of the 'rationum' field.
-   * @return The value of the 'rationum' field.
-   */
-  public float getRationum() {
-    return rationum;
-  }
-
-
-  /**
-   * Sets the value of the 'rationum' field.
-   * @param value the value to set.
-   */
-  public void setRationum(float value) {
-    this.rationum = value;
   }
 
   /**
@@ -240,9 +240,9 @@ public class AssetAvro extends org.apache.avro.specific.SpecificRecordBase imple
     implements org.apache.avro.data.RecordBuilder<AssetAvro> {
 
     private double id;
+    private float rationum;
     private int barcode;
     private int itemnum;
-    private float rationum;
 
     /** Creates a new Builder */
     private Builder() {
@@ -259,16 +259,16 @@ public class AssetAvro extends org.apache.avro.specific.SpecificRecordBase imple
         this.id = data().deepCopy(fields()[0].schema(), other.id);
         fieldSetFlags()[0] = other.fieldSetFlags()[0];
       }
-      if (isValidValue(fields()[1], other.barcode)) {
-        this.barcode = data().deepCopy(fields()[1].schema(), other.barcode);
+      if (isValidValue(fields()[1], other.rationum)) {
+        this.rationum = data().deepCopy(fields()[1].schema(), other.rationum);
         fieldSetFlags()[1] = other.fieldSetFlags()[1];
       }
-      if (isValidValue(fields()[2], other.itemnum)) {
-        this.itemnum = data().deepCopy(fields()[2].schema(), other.itemnum);
+      if (isValidValue(fields()[2], other.barcode)) {
+        this.barcode = data().deepCopy(fields()[2].schema(), other.barcode);
         fieldSetFlags()[2] = other.fieldSetFlags()[2];
       }
-      if (isValidValue(fields()[3], other.rationum)) {
-        this.rationum = data().deepCopy(fields()[3].schema(), other.rationum);
+      if (isValidValue(fields()[3], other.itemnum)) {
+        this.itemnum = data().deepCopy(fields()[3].schema(), other.itemnum);
         fieldSetFlags()[3] = other.fieldSetFlags()[3];
       }
     }
@@ -283,16 +283,16 @@ public class AssetAvro extends org.apache.avro.specific.SpecificRecordBase imple
         this.id = data().deepCopy(fields()[0].schema(), other.id);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.barcode)) {
-        this.barcode = data().deepCopy(fields()[1].schema(), other.barcode);
+      if (isValidValue(fields()[1], other.rationum)) {
+        this.rationum = data().deepCopy(fields()[1].schema(), other.rationum);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.itemnum)) {
-        this.itemnum = data().deepCopy(fields()[2].schema(), other.itemnum);
+      if (isValidValue(fields()[2], other.barcode)) {
+        this.barcode = data().deepCopy(fields()[2].schema(), other.barcode);
         fieldSetFlags()[2] = true;
       }
-      if (isValidValue(fields()[3], other.rationum)) {
-        this.rationum = data().deepCopy(fields()[3].schema(), other.rationum);
+      if (isValidValue(fields()[3], other.itemnum)) {
+        this.itemnum = data().deepCopy(fields()[3].schema(), other.itemnum);
         fieldSetFlags()[3] = true;
       }
     }
@@ -337,6 +337,45 @@ public class AssetAvro extends org.apache.avro.specific.SpecificRecordBase imple
     }
 
     /**
+      * Gets the value of the 'rationum' field.
+      * @return The value.
+      */
+    public float getRationum() {
+      return rationum;
+    }
+
+
+    /**
+      * Sets the value of the 'rationum' field.
+      * @param value The value of 'rationum'.
+      * @return This builder.
+      */
+    public com.umut.yesevi.avro.AssetAvro.Builder setRationum(float value) {
+      validate(fields()[1], value);
+      this.rationum = value;
+      fieldSetFlags()[1] = true;
+      return this;
+    }
+
+    /**
+      * Checks whether the 'rationum' field has been set.
+      * @return True if the 'rationum' field has been set, false otherwise.
+      */
+    public boolean hasRationum() {
+      return fieldSetFlags()[1];
+    }
+
+
+    /**
+      * Clears the value of the 'rationum' field.
+      * @return This builder.
+      */
+    public com.umut.yesevi.avro.AssetAvro.Builder clearRationum() {
+      fieldSetFlags()[1] = false;
+      return this;
+    }
+
+    /**
       * Gets the value of the 'barcode' field.
       * @return The value.
       */
@@ -351,9 +390,9 @@ public class AssetAvro extends org.apache.avro.specific.SpecificRecordBase imple
       * @return This builder.
       */
     public com.umut.yesevi.avro.AssetAvro.Builder setBarcode(int value) {
-      validate(fields()[1], value);
+      validate(fields()[2], value);
       this.barcode = value;
-      fieldSetFlags()[1] = true;
+      fieldSetFlags()[2] = true;
       return this;
     }
 
@@ -362,7 +401,7 @@ public class AssetAvro extends org.apache.avro.specific.SpecificRecordBase imple
       * @return True if the 'barcode' field has been set, false otherwise.
       */
     public boolean hasBarcode() {
-      return fieldSetFlags()[1];
+      return fieldSetFlags()[2];
     }
 
 
@@ -371,7 +410,7 @@ public class AssetAvro extends org.apache.avro.specific.SpecificRecordBase imple
       * @return This builder.
       */
     public com.umut.yesevi.avro.AssetAvro.Builder clearBarcode() {
-      fieldSetFlags()[1] = false;
+      fieldSetFlags()[2] = false;
       return this;
     }
 
@@ -390,9 +429,9 @@ public class AssetAvro extends org.apache.avro.specific.SpecificRecordBase imple
       * @return This builder.
       */
     public com.umut.yesevi.avro.AssetAvro.Builder setItemnum(int value) {
-      validate(fields()[2], value);
+      validate(fields()[3], value);
       this.itemnum = value;
-      fieldSetFlags()[2] = true;
+      fieldSetFlags()[3] = true;
       return this;
     }
 
@@ -401,7 +440,7 @@ public class AssetAvro extends org.apache.avro.specific.SpecificRecordBase imple
       * @return True if the 'itemnum' field has been set, false otherwise.
       */
     public boolean hasItemnum() {
-      return fieldSetFlags()[2];
+      return fieldSetFlags()[3];
     }
 
 
@@ -410,45 +449,6 @@ public class AssetAvro extends org.apache.avro.specific.SpecificRecordBase imple
       * @return This builder.
       */
     public com.umut.yesevi.avro.AssetAvro.Builder clearItemnum() {
-      fieldSetFlags()[2] = false;
-      return this;
-    }
-
-    /**
-      * Gets the value of the 'rationum' field.
-      * @return The value.
-      */
-    public float getRationum() {
-      return rationum;
-    }
-
-
-    /**
-      * Sets the value of the 'rationum' field.
-      * @param value The value of 'rationum'.
-      * @return This builder.
-      */
-    public com.umut.yesevi.avro.AssetAvro.Builder setRationum(float value) {
-      validate(fields()[3], value);
-      this.rationum = value;
-      fieldSetFlags()[3] = true;
-      return this;
-    }
-
-    /**
-      * Checks whether the 'rationum' field has been set.
-      * @return True if the 'rationum' field has been set, false otherwise.
-      */
-    public boolean hasRationum() {
-      return fieldSetFlags()[3];
-    }
-
-
-    /**
-      * Clears the value of the 'rationum' field.
-      * @return This builder.
-      */
-    public com.umut.yesevi.avro.AssetAvro.Builder clearRationum() {
       fieldSetFlags()[3] = false;
       return this;
     }
@@ -459,9 +459,9 @@ public class AssetAvro extends org.apache.avro.specific.SpecificRecordBase imple
       try {
         AssetAvro record = new AssetAvro();
         record.id = fieldSetFlags()[0] ? this.id : (java.lang.Double) defaultValue(fields()[0]);
-        record.barcode = fieldSetFlags()[1] ? this.barcode : (java.lang.Integer) defaultValue(fields()[1]);
-        record.itemnum = fieldSetFlags()[2] ? this.itemnum : (java.lang.Integer) defaultValue(fields()[2]);
-        record.rationum = fieldSetFlags()[3] ? this.rationum : (java.lang.Float) defaultValue(fields()[3]);
+        record.rationum = fieldSetFlags()[1] ? this.rationum : (java.lang.Float) defaultValue(fields()[1]);
+        record.barcode = fieldSetFlags()[2] ? this.barcode : (java.lang.Integer) defaultValue(fields()[2]);
+        record.itemnum = fieldSetFlags()[3] ? this.itemnum : (java.lang.Integer) defaultValue(fields()[3]);
         return record;
       } catch (org.apache.avro.AvroMissingFieldException e) {
         throw e;
@@ -496,11 +496,11 @@ public class AssetAvro extends org.apache.avro.specific.SpecificRecordBase imple
   {
     out.writeDouble(this.id);
 
+    out.writeFloat(this.rationum);
+
     out.writeInt(this.barcode);
 
     out.writeInt(this.itemnum);
-
-    out.writeFloat(this.rationum);
 
   }
 
@@ -511,11 +511,11 @@ public class AssetAvro extends org.apache.avro.specific.SpecificRecordBase imple
     if (fieldOrder == null) {
       this.id = in.readDouble();
 
+      this.rationum = in.readFloat();
+
       this.barcode = in.readInt();
 
       this.itemnum = in.readInt();
-
-      this.rationum = in.readFloat();
 
     } else {
       for (int i = 0; i < 4; i++) {
@@ -525,15 +525,15 @@ public class AssetAvro extends org.apache.avro.specific.SpecificRecordBase imple
           break;
 
         case 1:
-          this.barcode = in.readInt();
+          this.rationum = in.readFloat();
           break;
 
         case 2:
-          this.itemnum = in.readInt();
+          this.barcode = in.readInt();
           break;
 
         case 3:
-          this.rationum = in.readFloat();
+          this.itemnum = in.readInt();
           break;
 
         default:

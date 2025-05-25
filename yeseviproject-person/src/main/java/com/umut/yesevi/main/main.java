@@ -1,31 +1,36 @@
 package com.umut.yesevi.main;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
-import org.apache.avro.Schema;
 import org.apache.avro.file.DataFileReader;
 import org.apache.avro.file.DataFileWriter;
-import org.apache.avro.generic.GenericData;
-import org.apache.avro.generic.GenericDatumWriter;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.*;
 import org.apache.avro.specific.SpecificDatumReader;
+import org.apache.avro.specific.SpecificDatumWriter;
+import org.apache.thrift.TException;
+import org.apache.thrift.protocol.TCompactProtocol;
+import org.apache.thrift.transport.TIOStreamTransport;
+import org.apache.thrift.transport.TTransport;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.umut.yesevi.avro.PersonArrayAvro;
 import com.umut.yesevi.avro.PersonAvro;
-import com.umut.yesevi.protobuf.PersonArray;
-import com.umut.yesevi.protobuf.PersonPro;
+import com.umut.yesevi.protobuf.PersonProto;
+import com.umut.yesevi.protobuf.PersonProtoArray;
+import com.umut.yesevi.thrift.PersonList;
+import com.umut.yesevi.thrift.PersonThrift;
 
 public class main {
 	private final static String OUTPUT_PATH = "output/";
@@ -44,7 +49,7 @@ public class main {
 	// SIZE test variables
 	private static long totalFileSize = 0L;
 	private static List<Long> serializationSizes;
-	private static String[] serializedFileNames;
+	private static List<String> serializedFileNames;
 
 	// TIME test variables:
 	private static long startTime = 0L;
@@ -54,7 +59,7 @@ public class main {
 	private static long totalDeserializationTime = 0L;
 	private static List<Long> deserializationTimes;
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, TException {
 		Scanner s = new Scanner(System.in);
 		System.out.println("Starting tests with only-string-set....");
 
@@ -73,6 +78,17 @@ public class main {
 			// Print report:
 			printReport("ONLY-STRING-SET JSON REPORT");
 			System.out.println("END OF JSON TEST.");
+
+			// Wait user to CPU-RAM usage logs:
+			System.out.println("\nPress Enter key to start test THRIFT_test_size_" + test_size);
+			s.nextLine();
+			// *-*-*-*-*-* START TO THRIFT TEST *-*-*-*-*-*-*-*-
+			System.out.println("STARTING THRIFT TEST....");
+			thriftPersonTest();
+			// Print report:
+			printReport("ONLY-NUMBERS-SET THRIFT REPORT");
+			System.out.println("END  OF THRIFT TEST.");
+
 
 			// Wait user for CPU-RAM usage logs:
 			System.out.println("\nPress Enter key to start test PROTOBUF_test_size_" + test_size);
@@ -119,7 +135,7 @@ public class main {
 		// Reseting SIZE test variables
 		totalFileSize = 0L;
 		serializationSizes = new ArrayList<Long>();
-		serializedFileNames = new String[REPEATING_NUMBER];
+		serializedFileNames = new ArrayList<String>();
 
 		// Reseting TIME test variables:
 		startTime = 0L;
@@ -130,6 +146,7 @@ public class main {
 		deserializationTimes = new ArrayList<Long>();
 	}
 
+	
 	private static void beforeSerialization(String fileSuffix, int element) {
 		// setting output file:
 		String fileName = fileSuffix + "Test_" + test_size + "_" + System.currentTimeMillis() + "." + fileSuffix;
@@ -137,26 +154,28 @@ public class main {
 		outputFile = new File(path + fileName);
 
 		// save file names for deserialization:
-		serializedFileNames[element] = path + fileName;
+		serializedFileNames.add(path + fileName);
 
 		// Set test variables:
 		startTime = System.currentTimeMillis();
 	}
 	
 
-	private static void afterSerialization() {
+	private static void afterSerialization(int i) {
 		// Get test variables:
 		finishTime = System.currentTimeMillis();
+		// Do not calculate first 3 processes:
+		if(i>2) {
+			// set SIZE:
+			Long fileSize = outputFile.length();
+			serializationSizes.add(fileSize);
+			totalFileSize += fileSize;
 
-		// set SIZE:
-		Long fileSize = outputFile.length();
-		serializationSizes.add(fileSize);
-		totalFileSize += fileSize;
-
-		// set TIME:
-		Long timeForSerialization = finishTime - startTime;
-		serializationTimes.add(timeForSerialization);
-		totalSerializationTime += timeForSerialization;
+			// set TIME:
+			Long timeForSerialization = finishTime - startTime;
+			serializationTimes.add(timeForSerialization);
+			totalSerializationTime += timeForSerialization;
+		}
 	}
 	
 
@@ -166,14 +185,16 @@ public class main {
 	}
 	
 
-	private static void afterDeserialization() {
+	private static void afterDeserialization(int i) {
 		// Get test variables:
 		finishTime = System.currentTimeMillis();
-
-		// TIME min, max and total:
-		Long timeForDeserialization = finishTime - startTime;
-		deserializationTimes.add(timeForDeserialization);
-		totalDeserializationTime += timeForDeserialization;
+		// Do not calculate first 3 processes:
+		if(i>2) {
+			// Set TIME:
+			Long timeForDeserialization = finishTime - startTime;
+			deserializationTimes.add(timeForDeserialization);
+			totalDeserializationTime += timeForDeserialization;
+		}
 	}
 	
 
@@ -188,7 +209,7 @@ public class main {
 		// SIZE avr min max
 		long avrSize = totalFileSize / REPEATING_NUMBER;
 		System.out.print("Serialization Size" + "\t");
-		System.out.print(avrSize / 1024L + "\t\t");
+		System.out.print(avrSize / 1024 + "\t\t");
 		System.out.print(Collections.min(serializationSizes) / 1024 + "\t\t");
 		System.out.print(Collections.max(serializationSizes) / 1024 + "\t\t");
 		System.out.print("kb" + "\t\t");
@@ -220,7 +241,7 @@ public class main {
 
 		// Starting JSON serialization:
 		System.out.println("Starting Json serialization....");
-		for (int i = 0; i < REPEATING_NUMBER; i++) {
+		for (int i = 0; i < REPEATING_NUMBER+3; i++) {	// Do not calculate first 3 progress
 			// Set test variables:
 			beforeSerialization("json", i);
 
@@ -228,20 +249,20 @@ public class main {
 			jsonPersonSerialization(personTestArray, outputFile);
 
 			// Get test variables:
-			afterSerialization();
+			afterSerialization(i);
 		}
 
 		// Starting JSON deserialization:
 		System.out.println("Starting Json deserialization....");
-		for (int i = 0; i < REPEATING_NUMBER; i++) {
+		for (int i = 0; i < REPEATING_NUMBER+3; i++) {	// Do not calculate first 3 progress
 			// Set test variables:
 			beforeDeserialization();
 
 			// Start deserialization:
-			jsonPersonDeserialization(new File(serializedFileNames[i]));
+			jsonPersonDeserialization(new File(serializedFileNames.get(i)));
 
 			// Get test variables:
-			afterDeserialization();
+			afterDeserialization(i);
 		}
 	}
 
@@ -262,9 +283,9 @@ public class main {
 			jsonArr.put(jsonObj);
 		}
 
-		FileOutputStream jsonOutputStream = new FileOutputStream(outputFile);
-		jsonOutputStream.write(jsonArr.toString().getBytes());
-		jsonOutputStream.close();
+		try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outputFile))) {
+			bos.write(jsonArr.toString().getBytes());
+           }
 	}
 
 	private static JSONArray jsonPersonDeserialization(File dataFile) throws IOException {
@@ -273,14 +294,87 @@ public class main {
 
 		return jsonArr;
 	}
+	
 
+	private static void thriftPersonTest() throws IOException, TException {
+		// reseting test variables:
+		resetVariables();
+
+		// Starting Thrift serialization:
+		System.out.println("Starting Thrift serialization....");
+		for (int i = 0; i < REPEATING_NUMBER+3; i++) {	// Do not calculate first 3 progress
+			// Set test variables:
+			beforeSerialization("thrift", i);
+
+			// Start serialization:
+			thriftPersonSerialization(personTestArray, outputFile);
+
+			// Get test variables:
+			afterSerialization(i);
+		}
+
+		// Starting Thrift deserialization:
+		System.out.println("Starting Thrift deserialization....");
+		for (int i = 0; i < REPEATING_NUMBER+3; i++) {	// Do not calculate first 3 progress
+			// Set test variables:
+			beforeDeserialization();
+
+			// Start deserialization:
+			thriftPersonDeserialization(new File(serializedFileNames.get(i)));
+
+			// Get test variables:
+			afterDeserialization(i);
+		}
+	}
+
+	
+
+
+	
+    public static void thriftPersonSerialization(Person[] testArray, File outputFile) throws TException, IOException {
+		// Creating thrift data array:
+    	PersonList thriftPersonList = new PersonList();
+		int len = testArray.length;
+		for (int i = 0; i < len; i++) {
+            PersonThrift person = new PersonThrift();
+            person.setName(testArray[i].getName());  
+            person.setLastname(testArray[i].getLastname());
+            person.setAddress(testArray[i].getAddress());
+            person.setCity(testArray[i].getCity());
+            thriftPersonList.addToPersons(person);
+		}
+		
+		// Serializing to disk.
+		try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outputFile));
+			     TTransport transport = new TIOStreamTransport(bos)) {
+        		TCompactProtocol protocol = new TCompactProtocol(transport);
+        		thriftPersonList.write(protocol);  
+           }
+    }
+
+    
+    public static PersonList thriftPersonDeserialization(File dataFile) throws TException, IOException {
+    	PersonList thriftList = new PersonList();
+        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(dataFile));
+        	     TTransport transport = new TIOStreamTransport(bis)){
+        	TCompactProtocol protocol = new TCompactProtocol(transport);
+            thriftList.read(protocol);
+        }
+        return thriftList;
+    }
+
+		
+	
+	
+	
+	
 	private static void protobufPersonTest() throws IOException {
 		// reseting test variables:
 		resetVariables();
 
 		// Starting Protobuf serialization:
 		System.out.println("Starting Protobuf serialization....");
-		for (int i = 0; i < REPEATING_NUMBER; i++) {
+		for (int i = 0; i < REPEATING_NUMBER+3; i++) {	// Do not calculate first 3 progress
 			// Set test variables:
 			beforeSerialization("protobuf", i);
 
@@ -288,27 +382,27 @@ public class main {
 			protobufPersonSerialization(personTestArray, outputFile);
 
 			// Get test variables:
-			afterSerialization();
+			afterSerialization(i);
 		}
 
 		// Starting Protobuf deserialization:
 		System.out.println("Starting Protobuf deserialization....");
-		for (int i = 0; i < REPEATING_NUMBER; i++) {
+		for (int i = 0; i < REPEATING_NUMBER+3; i++) {	// Do not calculate first 3 progress
 			// Set test variables:
 			beforeDeserialization();
 
 			// Start deserialization:
-			protobufPersonDeserialization(new File(serializedFileNames[i]));
-
+			protobufPersonDeserialization(new File(serializedFileNames.get(i)));
+			
 			// Get test variables:
-			afterDeserialization();
+			afterDeserialization(i);
 		}
 	}
 
 	private static void protobufPersonSerialization(Person[] testArray, File outputFile) throws IOException {
 		// Protobuf builders:
-		PersonPro.Builder proBuilder = PersonPro.newBuilder();
-		PersonArray.Builder proArrayBuilder = PersonArray.newBuilder();
+		PersonProto.Builder proBuilder = PersonProto.newBuilder();
+		PersonProtoArray.Builder proArrayBuilder = PersonProtoArray.newBuilder();
 
 		// Creating protobuf data array:
 		int len = testArray.length;
@@ -321,13 +415,16 @@ public class main {
 		}
 
 		// Serializing to disk.
-		FileOutputStream output = new FileOutputStream(outputFile);
-		proArrayBuilder.build().writeTo(output);
-		output.close();
+		try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outputFile))) {
+			proArrayBuilder.build().writeTo(bos);  
+           }
 	}
 
-	private static PersonArray protobufPersonDeserialization(File dataFile) throws IOException {
-		PersonArray proArray = PersonArray.parseFrom(new FileInputStream(dataFile.getPath()));
+	private static PersonProtoArray protobufPersonDeserialization(File dataFile) throws IOException {
+		PersonProtoArray proArray = null;
+		try(BufferedInputStream bis = new BufferedInputStream(new FileInputStream(dataFile))) {
+			proArray = PersonProtoArray.parseFrom(bis);
+		}
 		return proArray;
 	}
 
@@ -335,67 +432,65 @@ public class main {
 		// reseting test variables:
 		resetVariables();
 
-		// create AVRO schema:
-		Schema avroSchema = new Schema.Parser().parse(new File("avro/person.avsc"));
-
 		// Starting Avro serialization:
 		System.out.println("Starting Avro serialization....");
-		for (int i = 0; i < REPEATING_NUMBER; i++) {
+		for (int i = 0; i < REPEATING_NUMBER+3; i++) {	// Do not calculate first 3 progress
 			// Set test variables:
 			beforeSerialization("avro", i);
 
 			// Start serialization:
-			avroPersonSerialization(avroSchema, personTestArray, outputFile);
+			avroPersonSerialization(personTestArray, outputFile);
 
 			// Get test variables:
-			afterSerialization();
+			afterSerialization(i);
 		}
 
 		// Starting Avro deserialization:
 		System.out.println("Starting Avro deserialization....");
-		for (int i = 0; i < REPEATING_NUMBER; i++) {
+		for (int i = 0; i < REPEATING_NUMBER+3; i++) {	// Do not calculate first 3 progress
 			// Set test variables:
 			beforeDeserialization();
 
 			// Start deserialization:
-			avroPersonDeserialization(avroSchema, new File(serializedFileNames[i]));
+			avroPersonDeserialization(new File(serializedFileNames.get(i))); 
 
 			// Get test variables:
-			afterDeserialization();
+			afterDeserialization(i);
 		}
 	}
 
-	private static void avroPersonSerialization(Schema schema, Person[] testArray, File outputFile) throws IOException {
-		DatumWriter<GenericRecord> datumWriter = new GenericDatumWriter<GenericRecord>(schema);
-		DataFileWriter<GenericRecord> dataFileWriter = new DataFileWriter<GenericRecord>(datumWriter);
-		dataFileWriter.create(schema, outputFile);
+	private static void avroPersonSerialization(Person[] testArray, File outputFile) throws IOException {		
+		DatumWriter<PersonArrayAvro> datumWriter = new SpecificDatumWriter<PersonArrayAvro>(PersonArrayAvro.class);
+		try (DataFileWriter<PersonArrayAvro> dataFileWriter = new DataFileWriter<PersonArrayAvro>(datumWriter);) {
+			// create AVRO list:
+			List<PersonAvro> personList = new ArrayList<>();	
+			for(Person person:testArray) {
+				personList.add(PersonAvro.newBuilder()
+						.setName(person.getName())
+						.setLastname(person.getLastname())
+						.setAddress(person.getAddress())
+						.setCity(person.getCity())
+						.build());
+			}	
+			// Create AVRO array:
+			PersonArrayAvro personArrayAvro =  new PersonArrayAvro(personList);
 
-		// create AVRO records:
-		int arrayLength = testArray.length;
-		for (int i = 0; i < arrayLength; i++) {
-			GenericRecord avroRecord = new GenericData.Record(schema);
-			avroRecord.put("name", testArray[i].getName());
-			avroRecord.put("lastname", testArray[i].getLastname());
-			avroRecord.put("city", testArray[i].getCity());
-			avroRecord.put("address", testArray[i].getAddress());
-			dataFileWriter.append(avroRecord);
+			// Write AVRO array to file:
+			dataFileWriter.create(PersonArrayAvro.getClassSchema(), outputFile);
+			dataFileWriter.append(personArrayAvro);
 		}
-		dataFileWriter.close();
 	}
-
-	private static PersonAvro[] avroPersonDeserialization(Schema schema, File dataFile) throws IOException {
-		PersonAvro[] avroArray = new PersonAvro[test_size];
-
-		DatumReader<PersonAvro> datumReader = new SpecificDatumReader<PersonAvro>(PersonAvro.class);
-		DataFileReader<PersonAvro> dataFileReader = new DataFileReader<PersonAvro>(dataFile, datumReader);
-
-		int i = 0;
-		while (dataFileReader.hasNext()) {
-			avroArray[i++] = dataFileReader.next();
+	
+	private static List<PersonArrayAvro> avroPersonDeserialization(File dataFile) throws IOException {
+		DatumReader<PersonArrayAvro> datumReader = new SpecificDatumReader<PersonArrayAvro>(PersonArrayAvro.class);
+		List<PersonArrayAvro> avroArray = null ;
+        try (DataFileReader<PersonArrayAvro> dataFileReader = new DataFileReader<PersonArrayAvro>(dataFile, datumReader)) {
+			while (dataFileReader.hasNext()) {
+			    GenericRecord record = dataFileReader.next();
+			    avroArray =  (List<PersonArrayAvro>) record.get("persons");
+			}
+			return avroArray;
 		}
-		dataFileReader.close();
-
-		return avroArray;
 	}
-
+	
 }
