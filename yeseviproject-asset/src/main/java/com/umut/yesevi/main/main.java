@@ -40,8 +40,8 @@ public class main {
 	private final static int BASE_TEST_SIZE = 1_000;
 	private static int test_size;
 
-	// repating number:
-	private final static int REPEATING_NUMBER = 1_000; 
+	// Repeating number:
+	private final static int REPEATING_NUMBER = 1_000;
 
 	// test data that will be used for all serialization methods: 
 	private static Asset[] assetTestArray;
