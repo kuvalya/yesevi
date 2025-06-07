@@ -15,3 +15,6 @@ thrift-0.21.0.exe -r -out employee --gen java employee.thrift
 
 PERSON:
 thrift-0.21.0.exe -r -out person --gen java person.thrift
+
+FILE:
+thrift-0.21.0.exe -r -out file --gen java file.thrift

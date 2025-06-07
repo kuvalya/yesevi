@@ -1,0 +1,23 @@
+{
+    "namespace": "com.umut.yesevi.avro",
+    "type": "record",
+    "name": "EmployeeArrayAvro",
+    "fields": [
+        {
+            "name": "employees",
+            "type": {
+                "type": "array",
+                "items": {
+                    "name": "EmployeeAvro",
+                    "type": "record",
+                    "fields": [
+                        {"name": "recid", "type": "double"},
+                        {"name": "share", "type": "float"},
+                        {"name": "jobcode", "type": "int"},
+                        {"name": "title", "type": "string"}
+                    ]
+                }
+            }
+        }
+    ]
+}
