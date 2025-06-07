@@ -1,5 +1,0 @@
-avsc şema dosyası hazırlandı.
-maven pom içerisine avro plugin eklendi (sourceDirectory ve outputDirectory değerlerini düzelt ).
-projeye sağ tıkla, run as, maven clean.
-projeye sağ tıkla, run as, maven generate-sources.
-projeye sağ tıkla, maven, update project.

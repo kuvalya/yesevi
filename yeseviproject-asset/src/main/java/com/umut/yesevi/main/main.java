@@ -14,8 +14,8 @@ import java.util.Scanner;
 
 import org.apache.avro.file.DataFileReader;
 import org.apache.avro.file.DataFileWriter;
-import org.apache.avro.generic.GenericRecord;
-import org.apache.avro.io.*;
+import org.apache.avro.io.DatumReader;
+import org.apache.avro.io.DatumWriter;
 import org.apache.avro.specific.SpecificDatumReader;
 import org.apache.avro.specific.SpecificDatumWriter;
 import org.apache.thrift.TException;
@@ -40,8 +40,9 @@ public class main {
 	private final static int BASE_TEST_SIZE = 1_000;
 	private static int test_size;
 
-	// Repeating number:
+	// repating number:
 	private final static int REPEATING_NUMBER = 1_000;
+	private static int SERIALIZATION_COUNTER = 0;
 
 	// test data that will be used for all serialization methods: 
 	private static Asset[] assetTestArray;
@@ -87,7 +88,7 @@ public class main {
 			thriftAssetTest();
 			// Print report:
 			printReport("ONLY-NUMBERS-SET THRIFT REPORT");
-			System.out.println("END  OF THRIFT TEST.");
+			System.out.println("END OF THRIFT TEST.");
 
 			// Wait user for CPU-RAM usage logs:
 			System.out.println("\nPress Enter key to start test PROTOBUF_test_size_" + test_size);
@@ -110,10 +111,9 @@ public class main {
 			System.out.println("END OF AVRO TEST.");
 
 			System.out.println("End of test_size " + test_size + " tests. \n\n ");
-
-
 		}
-		System.out.println("End of tests ");
+		resetVariables();
+		System.out.println("End of tests.");
 	}
 
 	private static void createAssetTestArray() {
@@ -147,6 +147,9 @@ public class main {
 		serializationTimes = new ArrayList<Long>();
 		totalDeserializationTime = 0L;
 		deserializationTimes = new ArrayList<Long>();
+		
+		// Reseting the counter:
+		SERIALIZATION_COUNTER = 0;
 	}
 
 	private static void beforeSerialization(String fileSuffix, int element) {
@@ -177,6 +180,9 @@ public class main {
 			Long timeForSerialization = finishTime - startTime;
 			serializationTimes.add(timeForSerialization);
 			totalSerializationTime += timeForSerialization;
+			
+			// increment counter:
+			SERIALIZATION_COUNTER++;
 		}
 	}
 	
@@ -203,13 +209,13 @@ public class main {
 	private static void printReport(String reportName) {
 		System.out.println("***************************** " + reportName + " *******************************");
 		System.out.println("number of data:\t" + test_size);
-		System.out.println("repeating number:\t" + REPEATING_NUMBER);
+		System.out.println("repeating number:\t" + SERIALIZATION_COUNTER);
 
 		System.out.println("----------------------------------------------------------------------------------");
 		System.out.println("DATA\t\t\t" + "AVG\t\t" + "MIN\t\t" + "MAX\t\t" + "NOTES");
 
 		// SIZE avr min max
-		long avrSize = totalFileSize / REPEATING_NUMBER;
+		long avrSize = totalFileSize / SERIALIZATION_COUNTER;
 		System.out.print("Serialization Size" + "\t");
 		System.out.print(avrSize / 1024 + "\t\t");
 		System.out.print(Collections.min(serializationSizes) / 1024 + "\t\t");
@@ -219,7 +225,7 @@ public class main {
 		
 		// SERIALIZATION TIME avr min max
 		System.out.print("Serialization Time" + "\t");
-		System.out.print((double)totalSerializationTime / (double)REPEATING_NUMBER + "\t\t");
+		System.out.print((double)totalSerializationTime / (double)SERIALIZATION_COUNTER + "\t\t");
 		System.out.print(Collections.min(serializationTimes) + "\t\t");
 		System.out.print(Collections.max(serializationTimes) + "\t\t");
 		System.out.print("ms" + "\t\t");
@@ -227,7 +233,7 @@ public class main {
 		
 		// DESERIALIZATION TIME avr min max
 		System.out.print("Deserialization Time" + "\t");
-		System.out.print((double)totalDeserializationTime / (double)REPEATING_NUMBER + "\t\t");
+		System.out.print((double)totalDeserializationTime / (double)SERIALIZATION_COUNTER + "\t\t");
 		System.out.print(Collections.min(deserializationTimes) + "\t\t");
 		System.out.print(Collections.max(deserializationTimes) + "\t\t");
 		System.out.print("ms" + "\t\t");
@@ -236,7 +242,6 @@ public class main {
 		System.out.println("----------------------------------------------------------------------------------");
 	}
 		
-
 
 	private static void jsonAssetTest() throws IOException {
 		// reseting test variables:
@@ -286,6 +291,7 @@ public class main {
 			jsonArr.put(jsonObj);
 		}
 
+		// Serialize to disk:
 		try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outputFile))) {
 			bos.write(jsonArr.toString().getBytes());
            }
@@ -294,7 +300,6 @@ public class main {
 	private static JSONArray jsonAssetDeserialization(File dataFile) throws IOException {
 		String jsonData = new String(Files.readAllBytes(dataFile.toPath()));
 		JSONArray jsonArr = new JSONArray(jsonData);
-
 		return jsonArr;
 	}
 	
@@ -330,7 +335,6 @@ public class main {
 		}
 	}
 
-	
     public static void thriftAssetSerialization(Asset[] testArray, File outputFile) throws TException, IOException {
 		// Creating thrift data array:
     	AssetList thriftAssetList = new AssetList();
@@ -352,7 +356,6 @@ public class main {
            }
     }
 
-    
     public static AssetList thriftAssetDeserialization(File dataFile) throws TException, IOException {
         AssetList thriftList = new AssetList();
         try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(dataFile));
@@ -419,10 +422,11 @@ public class main {
 	private static AssetProtoArray protobufAssetDeserialization(File dataFile) throws IOException {
 		AssetProtoArray proArray = null;
 		try(BufferedInputStream bis = new BufferedInputStream(new FileInputStream(dataFile))) {
-			AssetProtoArray.parseFrom(bis);			
+			proArray = AssetProtoArray.parseFrom(bis);
 		}
 		return proArray;
 	}
+
 
 	private static void avroAssetTest() throws IOException {
 		// reseting test variables:
@@ -477,16 +481,15 @@ public class main {
 		}
 	}
 
-	private static List<AssetArrayAvro> avroAssetDeserialization(File dataFile) throws IOException {
+	private static AssetArrayAvro avroAssetDeserialization(File dataFile) throws IOException {
+		AssetArrayAvro avroArray = null;
 		DatumReader<AssetArrayAvro> datumReader = new SpecificDatumReader<AssetArrayAvro>(AssetArrayAvro.class);
-		List<AssetArrayAvro> avroArray = null ;
         try (DataFileReader<AssetArrayAvro> dataFileReader = new DataFileReader<AssetArrayAvro>(dataFile, datumReader)) {
-			while (dataFileReader.hasNext()) {
-			    GenericRecord record = dataFileReader.next();
-			    avroArray =  (List<AssetArrayAvro>) record.get("assets");
+			if (dataFileReader.hasNext()) {
+				avroArray = dataFileReader.next(avroArray);
 			}
-			return avroArray;
 		}
+		return avroArray;
 	}
 	
 }
