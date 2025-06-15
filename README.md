@@ -1,6 +1,6 @@
-- yeseviproject-asset: Only text test codes
-- yeseviproject-employee: Only number test codes
-- yeseviproject-person: Both text and number test codes
-- yeseviproject-file: File test codes
-- tools: Protobuf and Avro support tools
-- runnable: .jar runable files of codes
+- yeseviproject-asset: Only text tests code
+- yeseviproject-employee: Only number tests code
+- yeseviproject-person: Text and number tests code
+- yeseviproject-file: File tests code
+- tools: Protobuf and Thrift support tools/compilers
+- runnable: .jar files of codes
