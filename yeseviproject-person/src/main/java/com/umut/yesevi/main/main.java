@@ -61,56 +61,57 @@ public class main {
 	private static List<Long> deserializationTimes;
 
 	public static void main(String[] args) throws IOException, TException {
-		Scanner s = new Scanner(System.in);
-		System.out.println("Starting tests with only-string-set");
+		try (Scanner s = new Scanner(System.in)) {
+			System.out.println("Starting tests with only-string-set");
 
-		for (int i = 0; i < 3; i++) {
-			test_size = (int) (BASE_TEST_SIZE * Math.pow(10, i));
+			for (int i = 0; i < 3; i++) {
+				test_size = (int) (BASE_TEST_SIZE * Math.pow(10, i));
 
-			// Creating test data:
-			createPersonTestArray();
+				// Creating test data:
+				createPersonTestArray();
 
-			// Wait user for CPU-RAM usage logs:
-			System.out.println("\nPress Enter key to start test JSON_test_size_" + test_size);
-			s.nextLine();
-			// *-*-*-*-*-* START TO JSON TEST *-*-*-*-*-*-*-*-
-			System.out.println("STARTING TO JSON TEST....");
-			jsonPersonTest();
-			// Print report:
-			printReport("ONLY-STRING-SET JSON REPORT");
-			System.out.println("END OF JSON TEST.");
+				// Wait user for CPU-RAM usage logs:
+				System.out.println("\nPress Enter key to start test JSON_test_size_" + test_size);
+				s.nextLine();
+				// *-*-*-*-*-* START TO JSON TEST *-*-*-*-*-*-*-*-
+				System.out.println("STARTING TO JSON TEST....");
+				jsonPersonTest();
+				// Print report:
+				printReport("ONLY-STRING-SET JSON REPORT");
+				System.out.println("END OF JSON TEST.");
 
-			// Wait user to CPU-RAM usage logs:
-			System.out.println("\nPress Enter key to start test THRIFT_test_size_" + test_size);
-			s.nextLine();
-			// *-*-*-*-*-* START TO THRIFT TEST *-*-*-*-*-*-*-*-
-			System.out.println("STARTING THRIFT TEST....");
-			thriftPersonTest();
-			// Print report:
-			printReport("ONLY-STRING-SET THRIFT REPORT");
-			System.out.println("END OF THRIFT TEST.");
+				// Wait user to CPU-RAM usage logs:
+				System.out.println("\nPress Enter key to start test THRIFT_test_size_" + test_size);
+				s.nextLine();
+				// *-*-*-*-*-* START TO THRIFT TEST *-*-*-*-*-*-*-*-
+				System.out.println("STARTING THRIFT TEST....");
+				thriftPersonTest();
+				// Print report:
+				printReport("ONLY-STRING-SET THRIFT REPORT");
+				System.out.println("END OF THRIFT TEST.");
 
-			// Wait user for CPU-RAM usage logs:
-			System.out.println("\nPress Enter key to start test PROTOBUF_test_size_" + test_size);
-			s.nextLine();
-			// *-*-*-*-*-* START TO PROTOBUF TEST *-*-*-*-*-*-*-*-
-			System.out.println("STARTING PROTOBUF TEST....");
-			protobufPersonTest();
-			// Print report:
-			printReport("ONLY-STRING-SET PROTOBUF REPORT");
-			System.out.println("END OF PROTOBUF TEST.");
+				// Wait user for CPU-RAM usage logs:
+				System.out.println("\nPress Enter key to start test PROTOBUF_test_size_" + test_size);
+				s.nextLine();
+				// *-*-*-*-*-* START TO PROTOBUF TEST *-*-*-*-*-*-*-*-
+				System.out.println("STARTING PROTOBUF TEST....");
+				protobufPersonTest();
+				// Print report:
+				printReport("ONLY-STRING-SET PROTOBUF REPORT");
+				System.out.println("END OF PROTOBUF TEST.");
 
-			// Wait user to CPU-RAM usage logs:
-			System.out.println("\nPress Enter key to start test AVRO_test_size_" + test_size);
-			s.nextLine();
-			// *-*-*-*-*-* START TO AVRO TEST *-*-*-*-*-*-*-*-
-			System.out.println("STARTING AVRO TEST....");
-			avroPersonTest();
-			// Print report:
-			printReport("ONLY-STRING-SET AVRO REPORT");
-			System.out.println("END OF AVRO TEST.");
+				// Wait user to CPU-RAM usage logs:
+				System.out.println("\nPress Enter key to start test AVRO_test_size_" + test_size);
+				s.nextLine();
+				// *-*-*-*-*-* START TO AVRO TEST *-*-*-*-*-*-*-*-
+				System.out.println("STARTING AVRO TEST....");
+				avroPersonTest();
+				// Print report:
+				printReport("ONLY-STRING-SET AVRO REPORT");
+				System.out.println("END OF AVRO TEST.");
 
-			System.out.println("End of test_size " + test_size + " tests. \n\n ");
+				System.out.println("End of test_size " + test_size + " tests. \n\n ");
+			}
 		}
 		resetVariables();
 		System.out.println("End of tests.");

@@ -30,7 +30,6 @@ import com.umut.yesevi.avro.FileAvro;
 import com.umut.yesevi.protobuf.fileMessage;
 import com.umut.yesevi.thrift.FileThrift;
 
-
 public class main {
 	private final static String OUTPUT_PATH = "output/";
 	private static File outputFile;
@@ -61,56 +60,57 @@ public class main {
 	private static List<Long> deserializationTimes;
 
 	public static void main(String[] args) throws IOException, TException {
-		Scanner s = new Scanner(System.in);
-		System.out.println("Starting tests with file-set");
+		try (Scanner s = new Scanner(System.in)) {
+			System.out.println("Starting tests with file-set");
 
-		for (int i = 0; i < 3; i++) {
-			test_size = (int) (BASE_TEST_SIZE * Math.pow(10, i));
+			for (int i = 0; i < 3; i++) {
+				test_size = (int) (BASE_TEST_SIZE * Math.pow(10, i));
 
-			// Creating test data:
-			createInputSampleFile ();
+				// Creating test data:
+				createInputSampleFile();
 
-			// Wait user for CPU-RAM usage logs:
-			System.out.println("\nPress Enter key to start test JSON_test_size_kb_" + test_size);
-			s.nextLine();
-			// *-*-*-*-*-* START TO JSON TEST *-*-*-*-*-*-*-*-
-			System.out.println("STARTING TO JSON TEST....");
-			jsonFileTest();
-			// Print report:
-			printReport("FILE-SET JSON REPORT");
-			System.out.println("END OF JSON TEST.");
+				// Wait user for CPU-RAM usage logs:
+				System.out.println("\nPress Enter key to start test JSON_test_size_kb_" + test_size);
+				s.nextLine();
+				// *-*-*-*-*-* START TO JSON TEST *-*-*-*-*-*-*-*-
+				System.out.println("STARTING TO JSON TEST....");
+				jsonFileTest();
+				// Print report:
+				printReport("FILE-SET JSON REPORT");
+				System.out.println("END OF JSON TEST.");
 
-			// Wait user to CPU-RAM usage logs:
-			System.out.println("\nPress Enter key to start test THRIFT_test_size_kb_" + test_size);
-			s.nextLine();
-			// *-*-*-*-*-* START TO THRIFT TEST *-*-*-*-*-*-*-*-
-			System.out.println("STARTING THRIFT TEST....");
-			thriftFileTest();
-			// Print report:
-			printReport("FILE-SET THRIFT REPORT");
-			System.out.println("END OF THRIFT TEST.");
+				// Wait user to CPU-RAM usage logs:
+				System.out.println("\nPress Enter key to start test THRIFT_test_size_kb_" + test_size);
+				s.nextLine();
+				// *-*-*-*-*-* START TO THRIFT TEST *-*-*-*-*-*-*-*-
+				System.out.println("STARTING THRIFT TEST....");
+				thriftFileTest();
+				// Print report:
+				printReport("FILE-SET THRIFT REPORT");
+				System.out.println("END OF THRIFT TEST.");
 
-			// Wait user for CPU-RAM usage logs:
-			System.out.println("\nPress Enter key to start test PROTOBUF_test_size_kb_" + test_size);
-			s.nextLine();
-			// *-*-*-*-*-* START TO PROTOBUF TEST *-*-*-*-*-*-*-*-
-			System.out.println("STARTING PROTOBUF TEST....");
-			protobufFileTest();
-			// Print report:
-			printReport("FILE-SET PROTOBUF REPORT");
-			System.out.println("END OF PROTOBUF TEST.");
+				// Wait user for CPU-RAM usage logs:
+				System.out.println("\nPress Enter key to start test PROTOBUF_test_size_kb_" + test_size);
+				s.nextLine();
+				// *-*-*-*-*-* START TO PROTOBUF TEST *-*-*-*-*-*-*-*-
+				System.out.println("STARTING PROTOBUF TEST....");
+				protobufFileTest();
+				// Print report:
+				printReport("FILE-SET PROTOBUF REPORT");
+				System.out.println("END OF PROTOBUF TEST.");
 
-			// Wait user to CPU-RAM usage logs:
-			System.out.println("\nPress Enter key to start test AVRO_test_size_kb_" + test_size);
-			s.nextLine();
-			// *-*-*-*-*-* START TO AVRO TEST *-*-*-*-*-*-*-*-
-			System.out.println("STARTING AVRO TEST....");
-			avroFileTest();
-			// Print report:
-			printReport("FILE-SET AVRO REPORT");
-			System.out.println("END OF AVRO TEST.");
+				// Wait user to CPU-RAM usage logs:
+				System.out.println("\nPress Enter key to start test AVRO_test_size_kb_" + test_size);
+				s.nextLine();
+				// *-*-*-*-*-* START TO AVRO TEST *-*-*-*-*-*-*-*-
+				System.out.println("STARTING AVRO TEST....");
+				avroFileTest();
+				// Print report:
+				printReport("FILE-SET AVRO REPORT");
+				System.out.println("END OF AVRO TEST.");
 
-			System.out.println("End of test_size " + test_size + " tests. \n\n ");
+				System.out.println("End of test_size " + test_size + " tests. \n\n ");
+			}
 		}
 		resetVariables();
 		System.out.println("End of tests.");
